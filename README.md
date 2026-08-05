@@ -72,3 +72,38 @@ would be the wrong trade for anything private.
 | click a day header | fill / clear the whole column |
 | arrows | move · space toggles · shift+arrow drags |
 | ⌘Z / ⌘⇧Z | undo / redo, one step per gesture |
+
+## The War Room
+
+The same rail that holds the scheduler also holds five read-and-write rooms for
+the Higgsfield Global Film Festival. The calendar is now one icon; the rest are
+its neighbours.
+
+| Room | What it is |
+|---|---|
+| **Schedule** | the original availability grid, unchanged — its four panels moved into sub-tabs |
+| **The clock** | the festival timeline, computed live against the real dates. It advances on its own |
+| **The judges** | dossiers on Catmull and Papamichael: quotes, filmographies, what lands and what dies |
+| **The rules** | the nine ways to be ruled non-eligible before a judge sees your film |
+| **The slate** | six concepts built for this specific jury, with key art |
+| **The room** | anonymous idea posting and voting |
+
+Everything except **The room** is static — edit the `JUDGES`, `GATES`, `SLATE`
+and `FEST` arrays near the bottom of `index.html` and the pages rebuild
+themselves. Key art lives in `art/`, one file per concept `key`.
+
+### The room's trust model is not the scheduler's
+
+The scheduler treats the link as the permission, and any holder can edit any
+row. That is the right trade for availability and the wrong one for competitive
+ideas, so `festival_ideas` and `festival_votes` authenticate every write against
+a token the browser holds and the server never returns: `owner_token` is
+excluded from all read grants, deletes must present it, and one voter gets one
+vote per idea by primary key.
+
+It is still not a ballot box. Clearing site data yields a new identity and a
+second vote. That is acceptable for a closed room of collaborators and would not
+be for anything public — the UI says so on the page.
+
+Run the whole of `schema.sql` again after upgrading; the festival section is
+additive and every statement is idempotent.
