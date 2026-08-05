@@ -1111,7 +1111,10 @@ function sbHeaders(extra){
 async function sbFetch(path, opts){
   const res = await fetch(SB.url+"/rest/v1"+path, opts);
   if(!res.ok) throw new Error(res.status+" "+(await res.text()).slice(0,180));
-  return res.status===204 ? null : res.json();
+  /* PostgREST answers a successful write with 200/201 and an EMPTY body, so
+     res.json() would throw on the happy path and abort the rest of the push. */
+  const body = await res.text();
+  return body ? JSON.parse(body) : null;
 }
 function setOnline(ok,msg){
   const was=online; online=ok;
