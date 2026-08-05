@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-233000";
+  var BUILD="20260805-234500";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -2295,7 +2295,7 @@ function warRules(){
     '<h3>Team structure</h3>'+
     '<p>Each team needs its own <strong>Team Leader</strong> — the project owner and the payee. That part is required regardless. The thing that costs money is different: the one-prize cap keys on <strong>any participant appearing on more than one roster</strong>, leader or not. Keep every roster disjoint and each entry stays independently prize-eligible.</p>'+
     '<div class="wgrid two">'+
-      '<div class="wcard"><span class="tag">Allowed</span><h4>A shared toolchain</h4><p>Nothing in the rules restricts what software a team uses, or who advises it. Five teams sharing the Reelix pipeline is just a studio.</p></div>'+
+      '<div class="wcard"><span class="tag">Allowed</span><h4>A shared toolchain</h4><p>Nothing in the rules restricts what software a team uses, or who advises it. Several teams sharing the Reelix pipeline is just a studio.</p></div>'+
       '<div class="wcard"><span class="tag">Allowed</span><h4>Splitting winnings across teams</h4><p>Prizes pay to the Team Leader, and Higgsfield <i>"has no liability for, and will not mediate, intra-team distribution."</i> A cross-team share is a private contract they never see. Write it down before submission.</p></div>'+
       '<div class="wcard"><span class="tag">Not allowed</span><h4>One crew, five names</h4><p>Each team must genuinely author its own film. Shared tools yes; ghost-made entries are a listed disqualification ground.</p></div>'+
       '<div class="wcard"><span class="tag">Consequence</span><h4>Everything goes public</h4><p>After the deadline every prompt, generation and asset is openly viewable and reusable by other users. Every entry you field publishes the pipeline again.</p></div>'+
