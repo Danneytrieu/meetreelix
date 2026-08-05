@@ -968,6 +968,7 @@ function undo(){
     const s=undoStack.pop(), now=snapshot();
     if(applySnapshot(s)){
       if(now) redoStack.push(now);
+      markDirty(s.id); saveLocal();
       render(); toast("Undo"); return;
     }
   }
@@ -978,6 +979,7 @@ function redo(){
     const s=redoStack.pop(), now=snapshot();
     if(applySnapshot(s)){
       if(now) undoStack.push(now);
+      markDirty(s.id); saveLocal();
       render(); toast("Redo"); return;
     }
   }
@@ -1159,7 +1161,12 @@ const SB = (function(){
   return { url:c.url.replace(/\/+$/,""), key:c.anonKey };
 })();
 
-let online=!!SB, eventDirty=false, minePending=false, pushTimer=null, pullTimer=null, pulling=false;
+let online=!!SB, eventDirty=false, pushTimer=null, pullTimer=null, pulling=false;
+/* Which people have edits the server has not accepted yet. This was a single
+   boolean for "me", which could not describe adding a member, undoing, or
+   switching rows mid-flight — each of those silently dropped a write. */
+const dirty=new Set();
+function markDirty(id){ if(id) dirty.add(id); }
 /* the discord column is additive — if the migration has not been run yet the
    app still works, it just cannot show handles */
 let hasDiscord=true;
@@ -1203,15 +1210,16 @@ async function pushNow(){
         body:JSON.stringify(eventRow())});
       eventDirty=false;
     }
-    if(minePending && me){
-      const p=personById(me);
-      if(p){
-        const row={event_id:ev.id, name:p.name, slots:packBits(p.av)};
-        if(hasDiscord) row.discord=p.discord||null;
-        await sbFetch("/responses", {method:"POST", headers:sbHeaders({Prefer:"resolution=merge-duplicates"}),
-          body:JSON.stringify(row)});
-      }
-      minePending=false;
+    for(const id of [...dirty]){
+      const p=personById(id);
+      if(!p){ dirty.delete(id); continue; }
+      const packed=packBits(p.av);
+      const row={event_id:ev.id, name:p.name, slots:packed};
+      if(hasDiscord) row.discord=p.discord||null;
+      await sbFetch("/responses", {method:"POST", headers:sbHeaders({Prefer:"resolution=merge-duplicates"}),
+        body:JSON.stringify(row)});
+      /* an edit made while that request was in flight must stay pending */
+      if(packBits(p.av)===packed) dirty.delete(id);
     }
     setOnline(true);
   }catch(err){
@@ -1244,14 +1252,16 @@ async function pullAll(silent){
     }
     const S=slotCount(), len=ev.days.length*S;
     const myName = me ? (personById(me)||{}).name : null;
-    const mine   = me ? personById(me) : null;
 
     const next = (resp||[]).map(function(r){
-      /* my own row is authoritative locally while a write is still in flight */
-      if(minePending && mine && r.name===myName) return {id:mine.id, name:mine.name, discord:mine.discord, av:mine.av};
+      const local=ev.people.find(x=>x.name===r.name);
+      if(local && dirty.has(local.id)) return local;      /* unsaved edit wins */
       return {id:newId(), name:r.name, discord:r.discord||"", av:unpackBits(r.slots,len)};
     });
-    if(minePending && mine && !next.some(p=>p.name===myName)) next.push(mine);
+    /* people added here that the server has not stored yet */
+    ev.people.forEach(function(p){
+      if(dirty.has(p.id) && !next.some(x=>x.name===p.name)) next.push(p);
+    });
 
     ev.people=next;
     me = myName ? ((ev.people.find(p=>p.name===myName)||{}).id || null) : null;
@@ -1697,7 +1707,7 @@ function setCell(d,s,val){
   const i=cellIndex(d,s);
   if(p.av[i]===val) return;
   p.av[i]=val;
-  minePending=true;
+  markDirty(me);
   paintCellDom(d,s);
   scheduleCommit();
 }
@@ -1921,7 +1931,7 @@ function claimIdentity(raw,discord){
   else if(dtag(discord)) p.discord=dtag(discord);
   saveClaim(p.name);
   saveLastMe(p.name, p.discord);
-  me=p.id; borrowing=false; minePending=true;
+  me=p.id; borrowing=false; markDirty(p.id);
   undoStack.length=0; redoStack.length=0;
   saveLocal(); render();
   return true;
@@ -1949,8 +1959,10 @@ function addPerson(){
      straight away, with the banner up. Leaving you on your own row is how you
      end up overwriting yourself by accident. */
   const np=blankPerson(name,dsc.value); ev.people.push(np);
-  inp.value=""; dsc.value=""; saveLocal();
+  markDirty(np.id);                       /* or the next poll erases them */
+  inp.value=""; dsc.value="";
   startBorrow(np.id);
+  saveLocal();
 }
 $("btnAdd").addEventListener("click",addPerson);
 $("addName").addEventListener("keydown",e=>{ if(e.key==="Enter") addPerson(); });
@@ -2245,7 +2257,7 @@ $("btnReset").addEventListener("click",function(){
                              {method:"DELETE", headers:sbHeaders()});
       }catch(err){ toast("Couldn't reach the server — nothing was reset"); return; }
       ev.people=[]; ev.pick=null; me=null; borrowing=false;
-      minePending=false; eventDirty=true;
+      dirty.clear(); eventDirty=true;
       try{ localStorage.removeItem(claimKey()); }catch(e){}
       undoStack.length=0; redoStack.length=0;
       saveLocal(); invalidateView(); render();
