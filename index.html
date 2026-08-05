@@ -1362,10 +1362,7 @@ function render(){
   $("paintAs").innerHTML = me
     ? '<span class="rs-status-dot rs-on"></span>scheduling as <b>'+esc(personById(me).name)+'</b>'+
       (borrowing?' <span class="rs-chip rs-attn">for them</span>':'')
-    : '<button class="cta-name" id="ctaName">'+
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'+
-      'Add your name</button>';
-  const cta=$("ctaName"); if(cta) cta.addEventListener("click",openGate);
+    : '<span class="rs-faint">no one selected</span>';
 }
 
 function renderToolbar(){
