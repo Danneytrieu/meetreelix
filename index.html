@@ -1770,6 +1770,13 @@ $("peopleList").addEventListener("click",function(e){
         (isMine(id) ? " This is you — you'll be asked for a name again." : ""),
       ok:"Remove",
       onOk:function(){
+        /* the server row has to go too, or the next poll brings them back */
+        if(SB){
+          sbFetch("/responses?event_id=eq."+encodeURIComponent(ev.id)+
+                  "&name=eq."+encodeURIComponent(p.name),
+                  {method:"DELETE", headers:sbHeaders()})
+            .catch(function(){ toast("Removed here, but the server didn't confirm — check back in a moment"); });
+        }
         ev.people=ev.people.filter(x=>x.id!==id);
         if(me===id){ me=null; borrowing=false; }
         if(isMine(id)){ try{ localStorage.removeItem(claimKey()); }catch(err){} }
