@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-224500";
+  var BUILD="20260805-233000";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -601,6 +601,37 @@ a.rs-btn{text-decoration:none}
 .act-div{height:1px;background:var(--line);margin:7px 12px;flex:none}
 .act-quiet{opacity:.5}
 .act-quiet:hover{opacity:1}
+
+/* Expanded rail. Icon-only is fine once you know the six rooms and useless
+   before that, so the label is a real setting, not a hover tooltip. */
+.actbar{transition:width .18s cubic-bezier(.22,1,.36,1)}
+.body.rail-open .actbar{width:186px}
+.act-label{display:none;font-size:12.5px;letter-spacing:-.005em;white-space:nowrap;
+  margin-left:11px;color:inherit}
+.body.rail-open .act-label{display:inline}
+.body.rail-open .actbar{align-items:stretch}
+.body.rail-open .act{width:auto;display:flex;align-items:center;justify-content:flex-start;
+  padding:0 12px;margin:0 8px}
+.body.rail-open .act svg{flex:none}
+.body.rail-open .act[aria-selected="true"]::before{left:-8px;top:7px;bottom:7px}
+.body.rail-open .act-badge{position:static;margin-left:auto}
+.body.rail-open .act-dot{position:static;margin-left:auto;box-shadow:none}
+.body.rail-open .act-div{margin:7px 14px}
+.body.rail-open .spacer{flex:1}
+
+.rail-toggle{flex:none;display:flex;align-items:center;gap:0;height:34px;margin:6px 8px 2px;
+  padding:0 12px;background:transparent;border:1px solid transparent;border-radius:var(--rs-radius-sm);
+  color:var(--faint);cursor:pointer;font:inherit;transition:var(--rs-transition);
+  justify-content:center}
+.body.rail-open .rail-toggle{justify-content:flex-start}
+.rail-toggle:hover{color:var(--ink);background:var(--panel2)}
+.rail-toggle svg{width:15px;height:15px;transition:transform .18s ease}
+.body.rail-open .rail-toggle svg{transform:rotate(180deg)}
+.rail-toggle span{display:none;font-size:10px;font-family:var(--rs-mono);letter-spacing:.14em;
+  text-transform:uppercase;margin-left:10px}
+.body.rail-open .rail-toggle span{display:inline}
+@media(max-width:860px){.body.rail-open .actbar{width:var(--act-w)}
+  .body.rail-open .act-label,.body.rail-open .rail-toggle span{display:none}}
 .act-dot{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;
   background:var(--volt);box-shadow:0 0 0 3px var(--bg);animation:pulseDot 2.4s ease-in-out infinite}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.3}}
@@ -799,11 +830,21 @@ a.rs-btn{text-decoration:none}
 .war-side h6{margin:0 0 8px;font-family:var(--rs-mono);font-size:9.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--faint)}
 .war-side h6:not(:first-child){margin-top:20px}
+/* These jump the reader down the page. They looked like a list of facts, so
+   they now look like what they are: rows you press. */
 .toclist{list-style:none;margin:0;padding:0}
-.toclist li{margin-bottom:1px}
-.toclist a{display:block;padding:6px 9px;border-radius:var(--rs-radius-sm);color:var(--dim);
-  font-size:12.5px;text-decoration:none;transition:var(--rs-transition);line-height:1.4;cursor:pointer}
-.toclist a:hover{background:var(--panel2);color:var(--ink)}
+.toclist li{margin-bottom:3px}
+.toclist a{display:flex;align-items:center;gap:8px;padding:8px 10px;
+  border:1px solid var(--line);border-radius:var(--rs-radius-sm);
+  background:var(--panel);color:var(--dim);font-size:12.5px;text-decoration:none;
+  transition:var(--rs-transition);line-height:1.35;cursor:pointer}
+.toclist a::after{content:"";margin-left:auto;flex:none;width:6px;height:6px;
+  border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;
+  transform:rotate(-45deg);opacity:.45;transition:var(--rs-transition)}
+.toclist a:hover{background:var(--panel2);color:var(--ink);border-color:var(--line2);
+  transform:translateX(2px)}
+.toclist a:hover::after{opacity:1;color:var(--volt)}
+.toclist a:active{transform:translateX(2px) scale(.985)}
 .sidefact{padding:9px 0;border-bottom:1px solid var(--line)}
 .sidefact:last-child{border-bottom:0}
 .sidefact b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:2px}
@@ -858,10 +899,17 @@ a.rs-btn{text-decoration:none}
 
     <!-- ==================== ACTIVITY RAIL ==================== -->
     <nav class="actbar" role="tablist" aria-label="Rooms">
+      <button class="rail-toggle" id="railToggle" aria-expanded="false" title="Show names">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 6l6 6-6 6"/>
+        </svg>
+        <span>Collapse</span>
+      </button>
       <button class="act" id="modeSchedule" role="tab" aria-selected="true" title="Schedule — when we meet">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>
         </svg>
+        <span class="act-label">Schedule</span>
         <span class="act-badge" id="badgePeople" hidden></span>
       </button>
 
@@ -871,28 +919,33 @@ a.rs-btn{text-decoration:none}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="8.5"/><path d="M12 7.2V12l3.2 2"/>
         </svg>
+        <span class="act-label">The clock</span>
         <span class="act-dot" id="dotTimeline"></span>
       </button>
       <button class="act" id="modeJudges" role="tab" aria-selected="false" title="The Judges — who decides">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-5.8 7-5.8s7 2.2 7 5.8"/>
         </svg>
+        <span class="act-label">The judges</span>
       </button>
       <button class="act" id="modeRules" role="tab" aria-selected="false" title="The Rules — what kills you">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 3.2 4.5 6.4v5.1c0 4.5 3.1 8.1 7.5 9.3 4.4-1.2 7.5-4.8 7.5-9.3V6.4z"/><path d="M12 9v4M12 16.4h.01"/>
         </svg>
+        <span class="act-label">The rules</span>
         <span class="act-badge" id="badgeRules">9</span>
       </button>
       <button class="act" id="modeSlate" role="tab" aria-selected="false" title="The Slate — our concepts">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="2.8" y="6" width="18.4" height="13" rx="2.2"/><path d="M2.8 10.2h18.4M7.5 6 6 10.2M13 6l-1.5 4.2M18.5 6 17 10.2"/>
         </svg>
+        <span class="act-label">The slate</span>
       </button>
       <button class="act" id="modeRoom" role="tab" aria-selected="false" title="The Room — ideas &amp; voting">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M9.2 18.2h5.6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .8 1.6h5.6c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3z"/>
         </svg>
+        <span class="act-label">The room</span>
         <span class="act-badge" id="badgeRoom" hidden></span>
       </button>
 
@@ -901,6 +954,7 @@ a.rs-btn{text-decoration:none}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="8.6"/><path d="M9.7 9.4a2.4 2.4 0 1 1 3.1 2.9c-.5.2-.8.7-.8 1.3v.5M12 16.9h.01"/>
         </svg>
+        <span class="act-label">What is this?</span>
       </button>
     </nav>
 
@@ -2071,7 +2125,7 @@ const fmtDay = d => ptDate(d).toLocaleDateString(undefined,{month:"short",day:"n
 
 const JUDGES = [
   {
-    ini:"EC", name:"Edwin Catmull",
+    key:"catmull", ini:"EC", name:"Edwin Catmull",
     role:"Co-founder of Pixar · ex-President of Pixar and Walt Disney Animation Studios · 5× Oscar winner · Turing Award laureate · author of <i>Creativity, Inc.</i>",
     films:["Toy Story","Finding Nemo","The Incredibles","Up","WALL·E","Inside Out"],
     read:"He <b>invented</b> the technology underneath every frame you will generate — texture mapping, the z-buffer, subdivision surfaces. He has spent forty years watching brilliant engineers mistake a demo for a movie, and his entire published doctrine is the correction to that mistake. You cannot impress him with a render. You can only move him with a story.",
@@ -2084,7 +2138,7 @@ const JUDGES = [
     lose:["Technology as the subject","World-building with nobody to care about","A trailer instead of a story","Spectacle escalating with no emotional escalation","Photoreal chased for its own sake"]
   },
   {
-    ini:"PP", name:"Phedon Papamichael, ASC",
+    key:"papamichael", ini:"PP", name:"Phedon Papamichael, ASC",
     role:"Cinematographer · 2× Oscar and BAFTA nominee · ASC and GSC member · long-time collaborator of Alexander Payne and James Mangold",
     films:["Nebraska","Sideways","The Descendants","Walk the Line","3:10 to Yuma","The Pursuit of Happyness","Ford v Ferrari","The Trial of the Chicago 7"],
     read:"A <b>naturalist</b>. He shot an entire feature in black and white about a man walking to Nebraska. His camera almost never shows off, and when it finally does — Le Mans, 1966 — it is bolted to a driver's face, not floating above the track. He will read your film for where the light comes from, whether the eyelines cut, and whether the space holds together.",
@@ -2196,7 +2250,7 @@ function warTimeline(){
 
 function warJudges(){
   const cards = JUDGES.map(j=>
-    '<div class="judge"><div class="judge-head"><div class="judge-ini">'+j.ini+'</div>'+
+    '<div class="judge" id="j-'+j.key+'"><div class="judge-head"><div class="judge-ini">'+j.ini+'</div>'+
     '<div class="judge-id"><h3>'+esc(j.name)+'</h3><p class="role">'+j.role+'</p></div></div>'+
     '<div class="judge-body">'+
       '<h5>Selected work</h5><ul class="films">'+j.films.map(f=>'<li>'+esc(f)+'</li>').join("")+'</ul>'+
@@ -2237,14 +2291,14 @@ function warRules(){
     '<hr class="war-rule">'+
     '<h3>⚠ The blocking pre-flight — Aug 7, before a single credit</h3>'+
     '<div class="gate hot"><span class="gate-n">!</span><span class="gate-t"><b>Does a Reelix-driven generation land inside the submission project?</b>'+
-    '<span>The rules require your film to be <i>born inside the submission project</i>, and the audit reads that project\'s own generation history. If Reelix generates through the MCP or CLI, those generations may land in your general library instead — which fails the audit. On day one: create the project, fire one Reelix-driven generation, and confirm it appears inside that project with its prompt intact. If it does not, Reelix becomes the planning and assembly layer and generation happens in Cinema Studio. This single test decides the pipeline architecture for all five teams.</span></span></div>'+
+    '<span>The rules require your film to be <i>born inside the submission project</i>, and the audit reads that project\'s own generation history. If Reelix generates through the MCP or CLI, those generations may land in your general library instead — which fails the audit. On day one: create the project, fire one Reelix-driven generation, and confirm it appears inside that project with its prompt intact. If it does not, Reelix becomes the planning and assembly layer and generation happens in Cinema Studio. This single test decides the pipeline architecture for every team.</span></span></div>'+
     '<h3>Team structure</h3>'+
-    '<p>Each team needs its own <strong>Team Leader</strong> — the project owner and the payee. That part is required regardless. The thing that costs money is different: the one-prize cap keys on <strong>any participant appearing on more than one roster</strong>, leader or not. Keep every roster disjoint and five entries stay independently prize-eligible.</p>'+
+    '<p>Each team needs its own <strong>Team Leader</strong> — the project owner and the payee. That part is required regardless. The thing that costs money is different: the one-prize cap keys on <strong>any participant appearing on more than one roster</strong>, leader or not. Keep every roster disjoint and each entry stays independently prize-eligible.</p>'+
     '<div class="wgrid two">'+
       '<div class="wcard"><span class="tag">Allowed</span><h4>A shared toolchain</h4><p>Nothing in the rules restricts what software a team uses, or who advises it. Five teams sharing the Reelix pipeline is just a studio.</p></div>'+
       '<div class="wcard"><span class="tag">Allowed</span><h4>Splitting winnings across teams</h4><p>Prizes pay to the Team Leader, and Higgsfield <i>"has no liability for, and will not mediate, intra-team distribution."</i> A cross-team share is a private contract they never see. Write it down before submission.</p></div>'+
       '<div class="wcard"><span class="tag">Not allowed</span><h4>One crew, five names</h4><p>Each team must genuinely author its own film. Shared tools yes; ghost-made entries are a listed disqualification ground.</p></div>'+
-      '<div class="wcard"><span class="tag">Consequence</span><h4>Everything goes public</h4><p>After the deadline every prompt, generation and asset is openly viewable and reusable by other users. Five entries publish the pipeline five times.</p></div>'+
+      '<div class="wcard"><span class="tag">Consequence</span><h4>Everything goes public</h4><p>After the deadline every prompt, generation and asset is openly viewable and reusable by other users. Every entry you field publishes the pipeline again.</p></div>'+
     '</div>'+
     '</div>';
 }
@@ -2268,9 +2322,9 @@ function warSlate(){
     '<p class="lede">Every one of these is deliberately small. Three minutes, few locations, few characters — because drift is the enemy, and because restraint is what this jury actually rewards. Pick per team; no two teams take the same lane.</p>'+
     cards+
     '<hr class="war-rule">'+
-    '<h3>How to run the five teams</h3>'+
+    '<h3>How to run the teams</h3>'+
     '<p>Catmull\'s own answer, and he would recognise it: <strong>the Braintrust.</strong> Every team screens its cut to the others at fixed intervals. The room gives candid notes and has <em>no authority</em> — the director decides what to do with them. As he puts it, <i>"the film, not the filmmaker, is under the microscope."</i></p>'+
-    '<p>It also happens to be the structure your cross-team split already implies: five crews who improve each other instead of competing. <strong>Braintrust dates go on the Schedule tab.</strong></p>'+
+    '<p>It also happens to be the structure a cross-team split already implies: crews who improve each other instead of competing. <strong>Braintrust dates go on the Schedule tab.</strong></p>'+
     '</div>';
 }
 
@@ -2412,7 +2466,7 @@ function warSide(mode){
     '<h6>Note</h6><p class="rs-faint" style="font-size:11.5px;line-height:1.55">Dates can only be extended, never shortened.</p></div>';
 
   if(mode==="judges") return '<div class="war-side"><h6>The panel</h6><ul class="toclist">'+
-    '<li><a data-jump=".judge">Edwin Catmull</a></li><li><a data-jump=".judge:nth-of-type(2)">Phedon Papamichael</a></li></ul>'+
+    JUDGES.map(j=>'<li><a data-jump="#j-'+j.key+'">'+esc(j.name)+'</a></li>').join("")+'</ul>'+
     '<h6>The four criteria</h6>'+
     '<div class="sidefact"><b>Directing &amp; Storytelling</b><span>Narrative clarity, emotional impact, point of view.</span></div>'+
     '<div class="sidefact"><b>Visual Craft</b><span>Composition, cinematography, world-building, coherence.</span></div>'+
@@ -2493,9 +2547,24 @@ document.addEventListener("click",function(e){
   if(t) t.scrollIntoView({behavior:"smooth",block:"start"});
 });
 
+/* ---- rail: names on or off, and it remembers ---- */
+function setRail(open){
+  document.querySelector(".body").classList.toggle("rail-open",open);
+  const t=$("railToggle");
+  t.setAttribute("aria-expanded",String(open));
+  t.title = open ? "Hide names" : "Show names";
+  t.querySelector("span").textContent = open ? "Collapse" : "Expand";
+  try{ localStorage.setItem("mrx_rail", open?"1":"0"); }catch(e){}
+}
+$("railToggle").addEventListener("click",function(){
+  setRail(!document.querySelector(".body").classList.contains("rail-open"));
+});
+/* open by default the first time — nobody can read an icon they've never seen */
+try{ setRail(localStorage.getItem("mrx_rail")!=="0"); }catch(e){ setRail(true); }
+
 $("modeHelp").addEventListener("click",function(){
-  setMode("timeline");
-  toast("Rail: Schedule · Clock · Judges · Rules · Slate · Room");
+  setRail(true); setMode("timeline");
+  toast("Six rooms. The calendar is the first one.");
 });
 
 /* keep the live dot honest without a reload */
