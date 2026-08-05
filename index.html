@@ -1,3 +1,32 @@
+<script>
+/* GitHub Pages serves this page with max-age=600, so a browser can sit on a
+   stale copy long after a fix ships — and telling every person in a Discord
+   channel to hard-refresh is not a plan. Compare the build against an
+   uncached stamp and reload once if they differ. */
+(function(){
+  var BUILD="20260805-194046";
+  window.MEETREELIX_BUILD=BUILD;
+  try{
+    fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
+      .then(function(latest){
+        latest=(latest||"").trim();
+        if(!latest) return;
+        var u=new URL(location.href);
+        if(latest!==BUILD && !sessionStorage.getItem("mr.reloaded")){
+          sessionStorage.setItem("mr.reloaded","1");
+          u.searchParams.set("_r",latest);
+          location.replace(u.toString());
+          return;
+        }
+        sessionStorage.removeItem("mr.reloaded");
+        if(u.searchParams.has("_r")){            /* keep the address bar clean */
+          u.searchParams.delete("_r");
+          history.replaceState(null,"",u.pathname+u.search+u.hash);
+        }
+      }).catch(function(){});
+  }catch(e){}
+})();
+</script>
 <script src="config.js"></script>
 <title>meetReelix — find the time everyone's free</title>
 
@@ -637,6 +666,7 @@ a.rs-btn{text-decoration:none}
               <div class="kv"><span>Slot size</span><b id="kvSlot">—</b></div>
               <div class="kv"><span>Slots per day</span><b id="kvSlots">—</b></div>
               <div class="kv"><span>Time zone</span><b id="kvTz">—</b></div>
+              <div class="kv"><span>Build</span><b id="kvBuild">—</b></div>
             </div>
             <button class="rs-btn" id="btnEdit2">Edit dates &amp; window</button>
             <button class="rs-btn rs-btn-danger" id="btnReset">Reset this calendar</button>
@@ -1582,6 +1612,7 @@ function renderEventPanel(){
   $("kvWindow").textContent = timeLabel(vw.rows[0])+" – "+timeLabel(vw.rows[vw.rows.length-1]+ev.slot);
   $("kvSlot").textContent   = ev.slot+" min";
   $("kvSlots").textContent  = S+"  ("+(S*ev.days.length)+" cells)";
+  $("kvBuild").textContent = window.MEETREELIX_BUILD||"—";
   $("kvTz").textContent = tzDiffers()
     ? ev.tz+"  (you: "+localTz()+")"
     : ev.tz;
