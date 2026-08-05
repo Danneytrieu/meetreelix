@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-235329";
+  var BUILD="20260805-235446";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -968,8 +968,8 @@ a.rs-btn{text-decoration:none}
 
         <!-- scheduler sub-tabs (the old rail, folded under one icon) -->
         <div class="subnav" id="schedSubnav" role="tablist" aria-label="Schedule panels">
-          <button class="subtab" id="actBest"   role="tab" aria-selected="true"  aria-controls="panBest">Best</button>
-          <button class="subtab" id="actPeople" role="tab" aria-selected="false" aria-controls="panPeople">Members</button>
+          <button class="subtab" id="actPeople" role="tab" aria-selected="true"  aria-controls="panPeople">Members</button>
+          <button class="subtab" id="actBest"   role="tab" aria-selected="false" aria-controls="panBest">Time</button>
           <button class="subtab" id="actEvent"  role="tab" aria-selected="false" aria-controls="panEvent">Event</button>
           <button class="subtab" id="actShare"  role="tab" aria-selected="false" aria-controls="panShare">Share</button>
         </div>
