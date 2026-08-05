@@ -622,6 +622,8 @@ a.rs-btn{text-decoration:none}
               <div class="kv"><span>Time zone</span><b id="kvTz">—</b></div>
             </div>
             <button class="rs-btn" id="btnEdit2">Edit dates &amp; window</button>
+            <button class="rs-btn rs-btn-danger" id="btnReset">Reset this calendar</button>
+            <p class="share-note" style="margin-top:0">Clears every answer on the shared link. Needs a PIN.</p>
             <button class="rs-btn rs-btn-danger" id="btnWipe">Clear everything on this device</button>
             <p class="share-note" style="margin-top:0">Clears this browser only. Shared links keep working.</p>
           </div>
@@ -766,7 +768,15 @@ a.rs-btn{text-decoration:none}
       <span class="rs-h-sec" id="cfKicker">Confirm</span>
       <h2 id="cfTitle"></h2>
     </div>
-    <div class="mb-body"><p class="rs-muted" id="cfBody" style="margin:0"></p></div>
+    <div class="mb-body">
+      <p class="rs-muted" id="cfBody" style="margin:0"></p>
+      <div class="fgroup" id="cfPinWrap" hidden>
+        <label class="rs-h-sec" style="color:var(--dim)" for="cfPin">Enter PIN</label>
+        <input class="rs-input" id="cfPin" type="password" inputmode="numeric" maxlength="8"
+               autocomplete="off" placeholder="••••">
+        <p class="share-note" id="cfPinErr" style="margin:0;color:var(--check)" hidden>Wrong PIN.</p>
+      </div>
+    </div>
     <div class="mb-foot">
       <button class="rs-btn rs-btn-ghost" id="cfCancel">Cancel</button>
       <button class="rs-btn rs-btn-danger" id="cfOk">Remove</button>
@@ -902,6 +912,15 @@ const LS="meetreelix.events.v1";
    the only row a stray drag can touch, and editing anyone else takes a separate,
    clearly-labelled action that announces itself the whole time it is on.       */
 function claimKey(){ return "meetreelix.me."+(ev?ev.id:""); }
+/* Who you are outlives any single event, so a new one shouldn't interrogate you
+   again. Per-event claims still decide which row you own. */
+const LAST_ME="meetreelix.lastme";
+function saveLastMe(name,discord){
+  try{ localStorage.setItem(LAST_ME, JSON.stringify({name:name,discord:discord||""})); }catch(e){}
+}
+function loadLastMe(){
+  try{ const o=JSON.parse(localStorage.getItem(LAST_ME)); return (o&&o.name)?o:null; }catch(e){ return null; }
+}
 function loadClaim(){ try{ return localStorage.getItem(claimKey())||""; }catch(e){ return ""; } }
 function saveClaim(name){ try{ localStorage.setItem(claimKey(), name); }catch(e){} }
 function myPerson(){
@@ -1780,19 +1799,36 @@ $("grid").addEventListener("keydown",function(e){
    ============================================================ */
 /* ---- confirm dialog ---- */
 let confirmAction=null;
+/* The PIN is a guard against an accidental wipe, not a security boundary: this
+   page is public, so anyone determined can read it straight out of the source.
+   It exists so a stray click can't erase everyone's answers. */
+const RESET_PIN="0310";
+let confirmNeedsPin=false;
 function askConfirm(o){
   $("cfKicker").textContent = o.kicker||"Confirm";
   $("cfTitle").textContent  = o.title;
   $("cfBody").textContent   = o.body||"";
   $("cfOk").textContent     = o.ok||"Confirm";
+  confirmNeedsPin = !!o.pin;
+  $("cfPinWrap").hidden = !o.pin;
+  $("cfPinErr").hidden = true;
+  $("cfPin").value = "";
   confirmAction = o.onOk;
   $("confirm").hidden=false;
-  setTimeout(()=>$("cfCancel").focus(),30);
+  setTimeout(()=>(o.pin?$("cfPin"):$("cfCancel")).focus(),30);
 }
-function closeConfirm(){ $("confirm").hidden=true; confirmAction=null; }
+function closeConfirm(){
+  $("confirm").hidden=true; confirmAction=null; confirmNeedsPin=false;
+  $("cfPin").value=""; $("cfPinWrap").hidden=true;
+}
 $("cfOk").addEventListener("click",function(){
+  if(confirmNeedsPin && $("cfPin").value.trim()!==RESET_PIN){
+    $("cfPinErr").hidden=false; $("cfPin").value=""; $("cfPin").focus();
+    return;
+  }
   const f=confirmAction; closeConfirm(); if(f) f();
 });
+$("cfPin").addEventListener("keydown",e=>{ if(e.key==="Enter") $("cfOk").click(); });
 $("cfCancel").addEventListener("click",closeConfirm);
 $("confirm").addEventListener("pointerdown",e=>{ if(e.target===$("confirm")) closeConfirm(); });
 
@@ -1846,6 +1882,7 @@ function claimIdentity(raw,discord){
   if(!p){ p=blankPerson(name,dtag(discord)); ev.people.push(p); }
   else if(dtag(discord)) p.discord=dtag(discord);
   saveClaim(p.name);
+  saveLastMe(p.name, p.discord);
   me=p.id; borrowing=false; minePending=true;
   undoStack.length=0; redoStack.length=0;
   saveLocal(); render();
@@ -1908,7 +1945,9 @@ function openGate(){
   $("gateExisting").hidden = !others.length;
   $("gateNames").innerHTML = others.map(p=>
     '<button class="gate-name" data-claim="'+esc(p.name)+'">'+esc(p.name)+'</button>').join("");
-  $("gateName").value=""; $("gateDiscord").value="";
+  const last=loadLastMe();                 /* one click if we already know you */
+  $("gateName").value = last ? last.name : "";
+  $("gateDiscord").value = last ? (last.discord||"") : "";
   $("gate").hidden=false;
   setTimeout(()=>$("gateName").focus(),30);
 }
@@ -2139,9 +2178,9 @@ $("btnSave").addEventListener("click",function(){
   closeSheet(); invalidateView(); saveLocal(); render(); hover(null);
   if(draft.mode!=="edit"){
     createRemote().then(function(){
-      openGate();
-      toast(SB ? "Event created — add your name, then share the link"
-               : "Event created — add your name, then share the link");
+      const last=loadLastMe();
+      if(last && claimIdentity(last.name,last.discord)) toast("Event created");
+      else { openGate(); toast("Event created"); }
     });
   }
 });
@@ -2153,6 +2192,30 @@ window.addEventListener("keydown",function(e){
   if(!$("gate").hidden) return void closeGate();
   if(!$("veil").hidden) closeSheet();
 });
+$("btnReset").addEventListener("click",function(){
+  const n=ev.people.length;
+  askConfirm({
+    kicker:"Reset calendar",
+    title:"Wipe every answer?",
+    body:(n?n+(n===1?" member and their":" members and their")+" marked times are deleted for everyone on this link.":
+            "There are no answers yet.")+" The event, its dates and the link stay the same.",
+    ok:"Reset",
+    pin:true,
+    onOk:async function(){
+      try{
+        if(SB) await sbFetch("/responses?event_id=eq."+encodeURIComponent(ev.id),
+                             {method:"DELETE", headers:sbHeaders()});
+      }catch(err){ toast("Couldn't reach the server — nothing was reset"); return; }
+      ev.people=[]; ev.pick=null; me=null; borrowing=false;
+      minePending=false; eventDirty=true;
+      try{ localStorage.removeItem(claimKey()); }catch(e){}
+      undoStack.length=0; redoStack.length=0;
+      saveLocal(); invalidateView(); render();
+      toast("Calendar reset — the link still works");
+    }
+  });
+});
+
 $("btnWipe").addEventListener("click",function(){
   askConfirm({
     kicker:"Clear saved data",
