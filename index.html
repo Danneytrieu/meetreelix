@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-234500";
+  var BUILD="20260805-235140";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -344,6 +344,7 @@ input,select{font:inherit;color:inherit}
   flex:0 0 auto;height:112px;background:var(--panel);border-top:1px solid var(--line2);
   display:flex;flex-direction:column;
 }
+.insp-body:empty{display:none}
 .insp-head{
   height:28px;flex:0 0 auto;display:flex;align-items:center;gap:9px;
   padding:0 13px;border-bottom:1px solid var(--line);
@@ -910,7 +911,6 @@ a.rs-btn{text-decoration:none}
           <rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>
         </svg>
         <span class="act-label">Schedule</span>
-        <span class="act-badge" id="badgePeople" hidden></span>
       </button>
 
       <div class="act-div" aria-hidden="true"></div>
@@ -950,18 +950,18 @@ a.rs-btn{text-decoration:none}
       </button>
 
       <div class="spacer"></div>
-      <button class="act act-quiet" id="modeHelp" title="What is this?">
+      <button class="act act-quiet" id="modeHelp" title="About">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="8.6"/><path d="M9.7 9.4a2.4 2.4 0 1 1 3.1 2.9c-.5.2-.8.7-.8 1.3v.5M12 16.9h.01"/>
         </svg>
-        <span class="act-label">What is this?</span>
+        <span class="act-label">About</span>
       </button>
     </nav>
 
     <!-- ======================= SIDEBAR ======================= -->
     <aside class="side">
       <div class="side-head">
-        <span class="rs-h-sec" id="sideTitle">Best times</span>
+        <span class="rs-h-sec" id="sideTitle">Members</span>
         <span class="rs-faint rs-mono" id="sideNote"></span>
       </div>
       <div class="side-body">
@@ -1070,16 +1070,15 @@ a.rs-btn{text-decoration:none}
         </div>
         <span class="rs-mono rs-faint" id="legendMax" style="font-size:10.5px"></span>
         <span class="peakmark"><i></i> Everyone</span>
-        <span class="hint">Drag to schedule · drag from a filled cell to clear · day header fills the column · ⌘Z undoes</span>
+        <span class="hint">drag to mark · drag again to clear · ⌘Z undo</span>
       </div>
 
       <div class="inspector">
         <div class="insp-head">
           <span class="rs-h-sec">Slot detail</span>
-          <span class="rs-faint rs-mono" style="font-size:10px" id="inspHint">hover the grid</span>
+          <span class="rs-faint rs-mono" style="font-size:10px" id="inspHint"></span>
         </div>
         <div class="insp-body" id="inspBody">
-          <p class="empty-note">Point at a cell to see who can make it.</p>
         </div>
       </div>
     </main>
@@ -1898,7 +1897,6 @@ function renderBest(){
     if(pane==="best") $("sideNote").textContent="";
     return;
   }
-  if(pane==="best") $("sideNote").textContent="top "+blocks.length;
   box.innerHTML = blocks.map(function(b){
     const w=blockWall(b);
     const mins=(b.b-b.a)*ev.slot, dur = mins>=60 ? (mins%60?(mins/60).toFixed(1):(mins/60))+"h" : mins+"m";
@@ -1918,9 +1916,6 @@ function renderBest(){
 
 function renderPeople(){
   const box=$("peopleList");
-  $("badgePeople").hidden = !ev.people.length;
-  $("badgePeople").textContent = ev.people.length;
-  if(pane==="people") $("sideNote").textContent = ev.people.length ? ev.people.length+" in" : "";
   if(!ev.people.length){
     box.innerHTML='<p class="empty-note">Nobody yet.</p>';
     return;
@@ -2008,8 +2003,8 @@ function chipFor(name,cls){
 function renderInspector(d,s){
   const box=$("inspBody");
   if(d==null){
-    $("inspHint").textContent="hover the grid";
-    box.innerHTML='<p class="empty-note">Point at a cell to see who can make it.</p>';
+    $("inspHint").textContent="";
+    box.innerHTML="";
     return;
   }
   const wall=slotWall(d,s);
@@ -2030,7 +2025,7 @@ function renderInspector(d,s){
 /* ============================================================
    PANES
    ============================================================ */
-const PANES=[["best","actBest","panBest","Best times"],
+const PANES=[["best","actBest","panBest","Time"],
              ["people","actPeople","panPeople","Members"],
              ["event","actEvent","panEvent","Event details"],
              ["share","actShare","panShare","Share"]];
@@ -3175,7 +3170,7 @@ $("btnEdit2").addEventListener("click",()=>openSheet("edit"));
     /* someone opened a shared link — the server is the source of truth */
     ev={id:wantId, title:"Loading…", days:nextWeekdays(1), start:9*60, end:18*60,
         slot:30, tz:localTz(), people:[], pick:null};
-    setPane("best"); render();
+    setPane("people"); render();
     try{
       const rows=await sbFetch("/events?id=eq."+encodeURIComponent(wantId)+"&select=*",
         {headers:sbHeaders()});
@@ -3199,7 +3194,7 @@ $("btnEdit2").addEventListener("click",()=>openSheet("edit"));
   const mine=myPerson();
   if(mine) me=mine.id;
   await probeDiscord();
-  setPane("best");
+  setPane("people");
   invalidateView(); render();
   const first=$("grid").querySelector(".g-slot");
   if(first) first.tabIndex=0;
