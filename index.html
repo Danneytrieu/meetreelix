@@ -4,7 +4,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-201444";
+  var BUILD="20260805-201937";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -465,9 +465,10 @@ a.rs-btn{text-decoration:none}
   grid-column:3;grid-row:1/4;align-self:center;font-size:11px;font-weight:700;
   padding:3px 9px;border-radius:999px;border:1px solid var(--cta-line);
   background:var(--cta-a);color:var(--cta-ink);white-space:nowrap;
-  opacity:.8;transition:opacity var(--rs-transition),filter var(--rs-transition);
+  opacity:0;transition:opacity var(--rs-transition),filter var(--rs-transition);
 }
-.best-row:hover .best-pick,.best-pick:focus-visible{opacity:1;filter:brightness(1.2)}
+.best-row:hover .best-pick,.best-pick:focus-visible{opacity:1}
+.best-row:hover .best-pick:hover{filter:brightness(1.2)}
 .best-row.is-picked{background:#1f2510;box-shadow:inset 2px 0 0 var(--volt)}
 .best-row.is-picked .best-pick{opacity:1;background:var(--volt);border-color:var(--volt);color:var(--bg)}
 
