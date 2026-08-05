@@ -4,7 +4,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-200949";
+  var BUILD="20260805-201444";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -435,13 +435,25 @@ input,select{font:inherit;color:inherit}
 
 /* the decision — the one thing everyone opened the link to find out */
 .decided{
-  flex:0 0 auto;display:flex;align-items:center;gap:11px;padding:8px 13px;
-  background:#1f2510;border-bottom:1px solid #4f6b16;color:var(--volt);
+  flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 16px;
+  background:var(--volt);color:var(--bg);
+  box-shadow:0 2px 14px rgba(212,255,61,.18);
 }
-.dec-when{display:flex;flex-direction:column;line-height:1.3;min-width:0;flex:1}
-.dec-when b{font-family:var(--rs-mono);font-size:13px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
-.dec-when span{font-size:11px;color:var(--dim)}
-.decided .rs-btn{flex:none}
+.dec-flag{
+  font-family:var(--rs-mono);font-size:9.5px;font-weight:800;letter-spacing:.16em;
+  text-transform:uppercase;background:var(--bg);color:var(--volt);
+  padding:3px 8px;border-radius:999px;flex:none;
+}
+.dec-when{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;min-width:0;flex:1}
+.dec-when b{
+  font-family:var(--rs-mono);font-size:15px;font-weight:800;color:var(--bg);
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums;
+}
+.dec-when span{font-size:12px;font-weight:600;color:rgba(12,13,10,.72)}
+.decided .rs-btn{flex:none;background:rgba(12,13,10,.14);border-color:rgba(12,13,10,.3);color:var(--bg);font-weight:700}
+.decided .rs-btn:hover{background:rgba(12,13,10,.26);border-color:rgba(12,13,10,.5)}
+.decided .rs-btn-volt{background:var(--bg);border-color:var(--bg);color:var(--volt)}
+.decided .rs-btn-volt:hover{filter:brightness(1.25)}
 a.rs-btn{text-decoration:none}
 
 .g-slot.picked::before{
@@ -453,9 +465,9 @@ a.rs-btn{text-decoration:none}
   grid-column:3;grid-row:1/4;align-self:center;font-size:11px;font-weight:700;
   padding:3px 9px;border-radius:999px;border:1px solid var(--cta-line);
   background:var(--cta-a);color:var(--cta-ink);white-space:nowrap;
-  opacity:0;transition:opacity var(--rs-transition);
+  opacity:.8;transition:opacity var(--rs-transition),filter var(--rs-transition);
 }
-.best-row:hover .best-pick,.best-pick:focus-visible{opacity:1}
+.best-row:hover .best-pick,.best-pick:focus-visible{opacity:1;filter:brightness(1.2)}
 .best-row.is-picked{background:#1f2510;box-shadow:inset 2px 0 0 var(--volt)}
 .best-row.is-picked .best-pick{opacity:1;background:var(--volt);border-color:var(--volt);color:var(--bg)}
 
@@ -577,6 +589,17 @@ a.rs-btn{text-decoration:none}
 </style>
 
 <div class="shell">
+
+  <div class="decided" id="decidedBar" hidden>
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 12.5 9.5 18 20 6.5"/>
+    </svg>
+    <span class="dec-flag">Meeting set</span>
+    <span class="dec-when"><b id="decWhen"></b><span id="decWho"></span></span>
+    <a class="rs-btn rs-btn-volt rs-btn-sm" id="decGcal" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
+    <button class="rs-btn rs-btn-sm" id="decCopy">Copy details</button>
+    <button class="rs-btn rs-btn-sm" id="decClear">Unpick</button>
+      </div>
 
   <!-- ======================= TOOLBAR ======================= -->
   <header class="rs-toolbar">
@@ -707,15 +730,6 @@ a.rs-btn{text-decoration:none}
         </div>
       </div>
 
-      <div class="decided" id="decidedBar" hidden>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M4 12.5 9.5 18 20 6.5"/>
-        </svg>
-        <span class="dec-when"><b id="decWhen"></b><span id="decWho"></span></span>
-        <a class="rs-btn rs-btn-volt rs-btn-sm" id="decGcal" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
-        <button class="rs-btn rs-btn-sm" id="decCopy">Copy details</button>
-        <button class="rs-btn rs-btn-ghost rs-btn-sm" id="decClear">Change</button>
-      </div>
 
       <div class="borrow" id="borrowBar" hidden>
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1572,7 +1586,7 @@ function renderBest(){
       '<span class="best-when">'+w.from+" – "+w.to+'</span>'+
       (missing.length ? '<span class="best-miss">without <b>'+esc(missing.join(", "))+'</b></span>' : '')+
       '<button class="best-pick" data-pick-a="'+b.a+'" data-pick-b="'+b.b+'" data-pick-d="'+b.di+'">'+
-        (chosen?"picked":"pick")+'</button>'+
+        (chosen?"picked":"pick this")+'</button>'+
     '</div>';
   }).join("");
 }
