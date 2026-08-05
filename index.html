@@ -357,8 +357,21 @@ input,select{font:inherit;color:inherit}
 .person.active .pdot{background:var(--volt)}
 .pname{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
 .person.active .pname{font-weight:600}
-.person.editing{background:#2c1f08;box-shadow:inset 0 0 0 1px #5a4420}
-.person.editing .pdot{background:var(--amber)}
+.person{cursor:pointer}
+.person.active{
+  background:#1f2510;
+  box-shadow:inset 3px 0 0 var(--volt), inset 0 0 0 1px #4f6b16;
+}
+.person.active .pname{font-weight:700;color:var(--ink)}
+.person.active .pdot{background:var(--volt)}
+/* editing someone who is not you — deliberately loud */
+.person.borrowed{
+  background:#2c1f08;
+  box-shadow:inset 3px 0 0 var(--amber), inset 0 0 0 1px #5a4420;
+}
+.person.borrowed .pdot{background:var(--amber)}
+.person.borrowed .editing-chip{background:var(--amber)}
+.person.active .editing-chip{background:var(--volt)}
 .editing-chip{
   font-family:var(--rs-mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   color:var(--bg);background:var(--amber);border-radius:3px;padding:1px 5px;flex:none;
@@ -589,7 +602,7 @@ a.rs-btn{text-decoration:none}
             <input class="rs-input" id="addName" placeholder="Add your name" maxlength="28" autocomplete="off">
             <button class="rs-btn rs-btn-volt" id="btnAdd">Add</button>
           </div>
-          <p class="share-note">Only the row marked <b>you</b> can be edited. If someone texts you their times instead of using the link, hover their name and hit <b>edit</b> — you'll get a banner the whole time you're filling in for them.</p>
+          <p class="share-note"><b>Click a name to edit that person's times.</b> The row you're editing is highlighted, and stays selected until you pick another one — nothing switches back on its own. Editing anyone but yourself also shows a banner above the grid.</p>
         </section>
 
         <section class="panel" id="panEvent" role="tabpanel" aria-labelledby="actEvent" hidden>
@@ -655,8 +668,8 @@ a.rs-btn{text-decoration:none}
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 9v4M12 17h.01M10.3 3.9 2.4 17.4A1.8 1.8 0 0 0 4 20h16a1.8 1.8 0 0 0 1.6-2.6L13.7 3.9a1.8 1.8 0 0 0-3.4 0z"/>
         </svg>
-        <span>You're filling in <b id="borrowName">someone</b>'s times, not your own.</span>
-        <button class="rs-btn rs-btn-sm" id="btnBorrowDone">Done</button>
+        <span>You're editing <b id="borrowName">someone</b>'s times, not your own. This stays on until you pick another name.</span>
+        <button class="rs-btn rs-btn-sm" id="btnBorrowDone">Back to my times</button>
       </div>
 
       <div class="scroller" id="scroller">
@@ -1461,15 +1474,17 @@ function renderPeople(){
   }
   box.innerHTML = ev.people.map(function(p){
     const n=p.av.reduce((a,b)=>a+(b?1:0),0), hrs=n*ev.slot/60;
-    const mine=isMine(p.id), editing=(p.id===me && borrowing);
-    return '<div class="person'+(p.id===me?" active":"")+(editing?" editing":"")+'">'+
+    const mine=isMine(p.id), sel=(p.id===me), other=(sel && !mine);
+    return '<div class="person'+(sel?" active":"")+(other?" borrowed":"")+'"'+
+      ' data-select="'+p.id+'" role="button" tabindex="0"'+
+      ' aria-pressed="'+(sel?"true":"false")+'"'+
+      ' title="'+(sel?"You are editing "+esc(p.name):"Click to edit "+esc(p.name)+"\u2019s times")+'">'+
       '<span class="pdot"></span>'+
       '<span class="pname">'+esc(p.name)+'</span>'+
-      (mine ? '<span class="you-chip">you</span>'
-            : editing ? '<span class="editing-chip">editing</span>'
-            : '<button class="pedit" data-borrow="'+p.id+'" title="Fill in '+esc(p.name)+'’s times for them">edit</button>')+
+      (mine ? '<span class="you-chip">you</span>' : '')+
+      (sel  ? '<span class="editing-chip">editing</span>' : '')+
       '<span class="pcount">'+(hrs%1?hrs.toFixed(1):hrs)+'h</span>'+
-      '<button class="px" data-del="'+p.id+'" title="Remove '+esc(p.name)+'" aria-label="Remove '+esc(p.name)+'">×</button>'+
+      '<button class="px" data-del="'+p.id+'" title="Remove '+esc(p.name)+'" aria-label="Remove '+esc(p.name)+'">\u00d7</button>'+
     '</div>';
   }).join("");
 }
@@ -1757,9 +1772,17 @@ $("cfOk").addEventListener("click",function(){
 $("cfCancel").addEventListener("click",closeConfirm);
 $("confirm").addEventListener("pointerdown",e=>{ if(e.target===$("confirm")) closeConfirm(); });
 
+$("peopleList").addEventListener("keydown",function(e){
+  if(e.key!=="Enter" && e.key!==" ") return;
+  const row=e.target.closest("[data-select]"); if(!row) return;
+  e.preventDefault(); selectMember(row.dataset.select);
+});
 $("peopleList").addEventListener("click",function(e){
-  const borrow=e.target.closest("[data-borrow]");
-  if(borrow){ startBorrow(borrow.dataset.borrow); return; }
+  const del0=e.target.closest("[data-del]");
+  if(!del0){
+    const row=e.target.closest("[data-select]");
+    if(row){ selectMember(row.dataset.select); return; }
+  }
   const del=e.target.closest("[data-del]");
   if(del){
     const id=del.dataset.del, p=personById(id); if(!p) return;
@@ -1834,22 +1857,23 @@ $("addName").addEventListener("keydown",e=>{ if(e.key==="Enter") addPerson(); })
 $("sbPaint").addEventListener("click",()=>{ if(me) setPane("people"); else openGate(); });
 
 /* ---- borrow mode: deliberately editing someone else ---- */
-function startBorrow(id){
-  const p=personById(id); if(!p) return;
-  me=id; borrowing=true;
+/* Selecting a member is explicit and STICKY. Nothing ever reassigns who you are
+   editing on its own — a silent hand-back is how you end up overwriting your own
+   times without noticing. The choice only changes when you click another name. */
+function selectMember(id){
+  const p=personById(id); if(!p || id===me) return;
+  me=id; borrowing=!isMine(id);
   undoStack.length=0; redoStack.length=0;
   render();
-  toast("Filling in "+p.name+"'s times — press Done when you're finished");
+  toast(borrowing ? "Now editing "+p.name+"'s times" : "Back on your own times");
 }
-function endBorrow(){
-  borrowing=false;
+function startBorrow(id){ selectMember(id); }
+function backToMe(){
   const mine=myPerson();
-  me = mine ? mine.id : null;
-  undoStack.length=0; redoStack.length=0;
-  render();
-  if(!mine) openGate();
+  if(!mine) return void openGate();
+  selectMember(mine.id);
 }
-$("btnBorrowDone").addEventListener("click",endBorrow);
+$("btnBorrowDone").addEventListener("click",backToMe);
 
 /* ---- identity gate ---- */
 function openGate(){
