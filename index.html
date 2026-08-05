@@ -4,7 +4,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-194046";
+  var BUILD="20260805-200949";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -643,7 +643,6 @@ a.rs-btn{text-decoration:none}
               <option value="120">2 hours</option>
               <option value="180">3 hours</option>
             </select>
-            <button class="rs-btn rs-btn-ghost rs-btn-sm" id="btnCopyBest" title="Copy these times as text">Copy</button>
           </div>
           <div id="bestList"></div>
         </section>
@@ -2067,19 +2066,6 @@ $("panBest").addEventListener("click",function(e){
 $("minDur").addEventListener("change",function(){
   minMins=+this.value;
   renderBest(); renderStatus();
-});
-$("btnCopyBest").addEventListener("click",function(){
-  const blocks=bestBlocks(), max=ev.people.length;
-  if(!blocks.length){ toast("Nothing to copy yet"); return; }
-  const lines=[ev.title+" — best times  ("+tzShort(activeTz())+")"];
-  blocks.slice(0,5).forEach(function(b,i){
-    const w=blockWall(b);
-    const missing=ev.people.filter((p,k)=>b.ids.indexOf(k)<0).map(p=>p.name);
-    lines.push((i+1)+". "+w.day+", "+w.from+" – "+w.to+"  ("+b.ids.length+"/"+max+
-      (missing.length?", without "+missing.join(", "):"")+")");
-  });
-  lines.push("", $("shareUrl").value);
-  copyText(lines.join("\n"), "Times copied — paste them anywhere");
 });
 
 function copyText(text, msg){
