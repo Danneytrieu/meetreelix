@@ -252,6 +252,10 @@ input,select{font:inherit;color:inherit}
 .g-endcap{border-top:1px solid var(--line2);border-left:1px solid var(--line);background:var(--bg)}
 /* when the grid is sized to fill exactly, the per-cell floor must not fight it */
 .grid.fitted .g-slot{min-height:0}
+/* squeezed rows would collide their labels, so drop to every second hour */
+.grid.dense .g-time:not(.alt-hour) span{display:none}
+.grid.dense .g-day{padding:4px 4px 5px}
+.grid.dense .g-day .dnum{font-size:13px}
 
 .g-slot{
   min-height:var(--cell-h);border-left:1px solid var(--line);
@@ -1383,11 +1387,12 @@ function blockWall(b){
 function fitRows(){
   const g=$("grid"), sc=$("scroller"); if(!g||!sc) return;
   const S=gridView().rows.length;
-  const MIN=20;                       /* must match --cell-h, or the min-height
-                                         floor overflows a fitted grid and the
-                                         last rows become unreachable */
+  /* The whole window should be on screen at once — you cannot judge an overlap
+     you have to scroll to find. Rows condense to whatever fits; only an
+     genuinely unreadable row height falls back to scrolling. */
+  const MIN_ROW=8, DENSE_BELOW=15;
   const fixed = () => {
-    g.classList.remove("fitted");
+    g.classList.remove("fitted","dense");
     g.style.height="";
     g.style.gridTemplateRows="auto repeat("+S+", var(--cell-h)) auto";
   };
@@ -1401,8 +1406,10 @@ function fitRows(){
   const avail=sc.clientHeight-headH-closeH;
   if(avail<=0) return void fixed();
 
-  if(avail/S >= MIN){
+  const per=avail/S;
+  if(per>=MIN_ROW){
     g.classList.add("fitted");
+    g.classList.toggle("dense", per<DENSE_BELOW);   /* thin out hour labels */
     g.style.height=sc.clientHeight+"px";
     g.style.gridTemplateRows="auto repeat("+S+", minmax(0,1fr)) auto";
   } else fixed();
@@ -1466,8 +1473,9 @@ function renderGrid(){
 
   v.rows.forEach(function(min){
     const isHour=(min%60===0);
-    html += '<div class="gcell g-time'+(isHour?" is-hour":"")+'">'+
-      (isHour||ev.slot>=60 ? timeLabel(min,true) : "")+'</div>';
+    const evenHour = Math.floor(min/60)%2===0;
+    html += '<div class="gcell g-time'+(isHour?" is-hour":"")+(evenHour?" alt-hour":"")+'"><span>'+
+      (isHour||ev.slot>=60 ? timeLabel(min,true) : "")+'</span></div>';
     v.cols.forEach(function(c){
       const idx=c.cells.get(min);
       if(idx===undefined){                     /* this hour doesn't exist on this day */
