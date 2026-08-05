@@ -18,11 +18,16 @@ create table if not exists public.responses (
   event_id   text        not null references public.events(id) on delete cascade,
   name       text        not null,
   slots      text        not null,   -- availability packed to base64url bits
+  discord    text,                   -- optional Discord handle
   updated_at timestamptz not null default now(),
   primary key (event_id, name)
 );
 
 create index if not exists responses_event_idx on public.responses(event_id);
+
+-- Discord handle, so an organiser can tell who "Dee" actually is in the server.
+-- Safe to run on an existing database; it is additive and nullable.
+alter table public.responses add column if not exists discord text;
 
 -- keep updated_at honest
 create or replace function public.touch_updated_at() returns trigger as $$

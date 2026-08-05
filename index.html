@@ -444,8 +444,14 @@ a.rs-btn{text-decoration:none}
 .pcount{font-family:var(--rs-mono);font-size:10.5px;color:var(--faint);font-variant-numeric:tabular-nums}
 .px{font-family:var(--rs-mono);font-size:14px;color:var(--faint);padding:0 3px;line-height:1}
 .px:hover{color:var(--check)}
-.addrow{display:flex;gap:7px;margin-top:10px}
-.addrow .rs-input{flex:1;min-width:0}
+.addform{display:flex;flex-direction:column;gap:6px;margin-top:11px}
+.pnames{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25;text-align:left}
+.pname{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdisc{
+  font-family:var(--rs-mono);font-size:10px;color:var(--faint);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.person.active .pdisc{color:var(--dim)}
 
 .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}
 .kv:last-child{border-bottom:none}
@@ -598,11 +604,12 @@ a.rs-btn{text-decoration:none}
 
         <section class="panel" id="panPeople" role="tabpanel" aria-labelledby="actPeople" hidden>
           <div id="peopleList"></div>
-          <div class="addrow">
-            <input class="rs-input" id="addName" placeholder="Add your name" maxlength="28" autocomplete="off">
-            <button class="rs-btn rs-btn-volt" id="btnAdd">Add</button>
+          <div class="addform">
+            <input class="rs-input" id="addName" placeholder="Name" maxlength="28" autocomplete="off">
+            <input class="rs-input" id="addDiscord" placeholder="Discord handle (optional)" maxlength="40" autocomplete="off">
+            <button class="rs-btn rs-btn-volt" id="btnAdd">Add member</button>
           </div>
-          <p class="share-note"><b>Click a name to edit that person's times.</b> The row you're editing is highlighted, and stays selected until you pick another one — nothing switches back on its own. Editing anyone but yourself also shows a banner above the grid.</p>
+          <p class="share-note">Click a name to edit their times.</p>
         </section>
 
         <section class="panel" id="panEvent" role="tabpanel" aria-labelledby="actEvent" hidden>
@@ -616,7 +623,7 @@ a.rs-btn{text-decoration:none}
             </div>
             <button class="rs-btn" id="btnEdit2">Edit dates &amp; window</button>
             <button class="rs-btn rs-btn-danger" id="btnWipe">Clear everything on this device</button>
-            <p class="share-note" style="margin-top:0">Wipes every event and name this browser has saved. Links other people hold still work — this only clears your own copy.</p>
+            <p class="share-note" style="margin-top:0">Clears this browser only. Shared links keep working.</p>
           </div>
         </section>
 
@@ -626,9 +633,7 @@ a.rs-btn{text-decoration:none}
             <button class="rs-btn rs-btn-volt" id="btnCopy">Copy</button>
           </div>
           <p class="share-note">
-            One link, one live schedule. Send it to anyone — <b>no account, no sign-in.</b>
-            They pick their name, mark when they're free, and it lands here within seconds.
-            Come back whenever; everyone's answers will be waiting.
+            One link, one live schedule. No sign-in. Answers land here within seconds.
           </p>
         </section>
 
@@ -668,7 +673,7 @@ a.rs-btn{text-decoration:none}
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 9v4M12 17h.01M10.3 3.9 2.4 17.4A1.8 1.8 0 0 0 4 20h16a1.8 1.8 0 0 0 1.6-2.6L13.7 3.9a1.8 1.8 0 0 0-3.4 0z"/>
         </svg>
-        <span>You're editing <b id="borrowName">someone</b>'s times, not your own. This stays on until you pick another name.</span>
+        <span>Editing <b id="borrowName">someone</b>'s times, not your own.</span>
         <button class="rs-btn rs-btn-sm" id="btnBorrowDone">Back to my times</button>
       </div>
 
@@ -692,7 +697,7 @@ a.rs-btn{text-decoration:none}
           <span class="rs-faint rs-mono" style="font-size:10px" id="inspHint">hover the grid</span>
         </div>
         <div class="insp-body" id="inspBody">
-          <p class="empty-note">Point at any cell to see exactly who can make it and who can't.</p>
+          <p class="empty-note">Point at a cell to see who can make it.</p>
         </div>
       </div>
     </main>
@@ -778,10 +783,11 @@ a.rs-btn{text-decoration:none}
     </div>
     <div class="mb-body">
       <p class="rs-muted" style="margin:0">
-        Your name locks to this browser, so you can only edit your own row — nobody writes over anyone else by accident.
+        Your name locks to this browser.
       </p>
       <div class="fgroup">
         <input class="rs-input" id="gateName" placeholder="Your name" maxlength="28" autocomplete="off">
+        <input class="rs-input" id="gateDiscord" placeholder="Discord handle (optional)" maxlength="40" autocomplete="off">
       </div>
       <div id="gateExisting" hidden>
         <div class="gate-or">members</div>
@@ -1044,7 +1050,11 @@ function newId(){
 }
 const personById = id => ev.people.find(p=>p.id===id);
 
-function blankPerson(name){ return {id:newId(), name:name.slice(0,28), av:new Array(totalCells()).fill(false)}; }
+function blankPerson(name,discord){
+  return {id:newId(), name:name.slice(0,28), discord:(discord||"").slice(0,40),
+          av:new Array(totalCells()).fill(false)};
+}
+function dtag(s){ s=String(s||"").trim().replace(/^@+/,""); return s; }
 
 /* A real, empty event: the next five weekdays, 9–6. No demo names, no answers. */
 function nextWeekdays(n){
@@ -1064,7 +1074,7 @@ function defaultEvent(){
 function encode(){
   const c={v:1,i:ev.id,t:ev.title,d:ev.days,s:ev.start,e:ev.end,n:ev.slot,z:ev.tz,
     k:(ev.pick?[ev.pick.di,ev.pick.a,ev.pick.b]:null),
-    p:ev.people.map(p=>[p.name,packBits(p.av)])};
+    p:ev.people.map(p=>[p.name,packBits(p.av),p.discord||""])};
   return b64e(new TextEncoder().encode(JSON.stringify(c)));
 }
 function decode(hash){
@@ -1075,7 +1085,8 @@ function decode(hash){
       start:o.s|0, end:o.e|0, slot:o.n||30, tz:o.z||localTz(), people:[],
       pick:(Array.isArray(o.k)?{di:o.k[0],a:o.k[1],b:o.k[2]}:null)};
     const len=e.days.length*Math.max(1,Math.round((e.end-e.start)/e.slot));
-    (o.p||[]).forEach(pr => e.people.push({id:newId(), name:String(pr[0]).slice(0,28), av:unpackBits(pr[1],len)}));
+    (o.p||[]).forEach(pr => e.people.push({id:newId(), name:String(pr[0]).slice(0,28),
+      discord:String(pr[2]||"").slice(0,40), av:unpackBits(pr[1],len)}));
     return e;
   }catch(err){ return null; }
 }
@@ -1113,6 +1124,14 @@ const SB = (function(){
 })();
 
 let online=!!SB, eventDirty=false, minePending=false, pushTimer=null, pullTimer=null, pulling=false;
+/* the discord column is additive — if the migration has not been run yet the
+   app still works, it just cannot show handles */
+let hasDiscord=true;
+async function probeDiscord(){
+  if(!SB) return;
+  try{ await sbFetch("/responses?select=discord&limit=1",{headers:sbHeaders()}); hasDiscord=true; }
+  catch(e){ hasDiscord=false; }
+}
 
 function sbHeaders(extra){
   return Object.assign({
@@ -1151,8 +1170,10 @@ async function pushNow(){
     if(minePending && me){
       const p=personById(me);
       if(p){
+        const row={event_id:ev.id, name:p.name, slots:packBits(p.av)};
+        if(hasDiscord) row.discord=p.discord||null;
         await sbFetch("/responses", {method:"POST", headers:sbHeaders({Prefer:"resolution=merge-duplicates"}),
-          body:JSON.stringify({event_id:ev.id, name:p.name, slots:packBits(p.av)})});
+          body:JSON.stringify(row)});
       }
       minePending=false;
     }
@@ -1174,7 +1195,7 @@ async function pullAll(silent){
   try{
     const [rows, resp] = await Promise.all([
       sbFetch("/events?id=eq."+encodeURIComponent(ev.id)+"&select=*", {headers:sbHeaders()}),
-      sbFetch("/responses?event_id=eq."+encodeURIComponent(ev.id)+"&select=name,slots", {headers:sbHeaders()})
+      sbFetch("/responses?event_id=eq."+encodeURIComponent(ev.id)+"&select=name,slots"+(hasDiscord?",discord":""), {headers:sbHeaders()})
     ]);
     const row=rows && rows[0];
     if(!row){ setOnline(true); pulling=false; return; }
@@ -1191,8 +1212,8 @@ async function pullAll(silent){
 
     const next = (resp||[]).map(function(r){
       /* my own row is authoritative locally while a write is still in flight */
-      if(minePending && mine && r.name===myName) return {id:mine.id, name:mine.name, av:mine.av};
-      return {id:newId(), name:r.name, av:unpackBits(r.slots,len)};
+      if(minePending && mine && r.name===myName) return {id:mine.id, name:mine.name, discord:mine.discord, av:mine.av};
+      return {id:newId(), name:r.name, discord:r.discord||"", av:unpackBits(r.slots,len)};
     });
     if(minePending && mine && !next.some(p=>p.name===myName)) next.push(mine);
 
@@ -1436,8 +1457,8 @@ function renderBest(){
   if(!blocks.length){
     box.innerHTML='<div class="panel"><p class="empty-note">'+(
       ev.people.length
-        ? "No block that long works for anyone. Try a shorter meeting."
-        : "Once somebody schedules their free time, the strongest overlaps get ranked here — fullest first, then longest."
+        ? "Nothing that long works. Try shorter."
+        : "Overlaps get ranked here once people answer."
     )+'</p></div>';
     if(pane==="best") $("sideNote").textContent="";
     return;
@@ -1466,7 +1487,7 @@ function renderPeople(){
   $("badgePeople").textContent = ev.people.length;
   if(pane==="people") $("sideNote").textContent = ev.people.length ? ev.people.length+" in" : "";
   if(!ev.people.length){
-    box.innerHTML='<p class="empty-note">Nobody yet. Add your name, schedule the times you\'re free, then send the link on.</p>';
+    box.innerHTML='<p class="empty-note">Nobody yet.</p>';
     return;
   }
   box.innerHTML = ev.people.map(function(p){
@@ -1477,7 +1498,8 @@ function renderPeople(){
       ' aria-pressed="'+(sel?"true":"false")+'"'+
       ' title="'+(sel?"You are editing "+esc(p.name):"Click to edit "+esc(p.name)+"\u2019s times")+'">'+
       '<span class="pdot"></span>'+
-      '<span class="pname">'+esc(p.name)+'</span>'+
+      '<span class="pnames"><span class="pname">'+esc(p.name)+'</span>'+
+        (p.discord?'<span class="pdisc">@'+esc(p.discord)+'</span>':'')+'</span>'+
       (mine ? '<span class="you-chip">you</span>' : '')+
       (sel  ? '<span class="editing-chip">editing</span>' : '')+
       '<span class="pcount">'+(hrs%1?hrs.toFixed(1):hrs)+'h</span>'+
@@ -1542,11 +1564,16 @@ function renderDecision(){
   $("decGcal").href = gcalUrl();
 }
 
+function chipFor(name,cls){
+  const p=ev.people.find(x=>x.name===name);
+  const d=p&&p.discord ? ' title="@'+esc(p.discord)+'"' : '';
+  return '<span class="'+cls+'"'+d+'>'+esc(name)+'</span>';
+}
 function renderInspector(d,s){
   const box=$("inspBody");
   if(d==null){
     $("inspHint").textContent="hover the grid";
-    box.innerHTML='<p class="empty-note">Point at any cell to see exactly who can make it and who can\'t.</p>';
+    box.innerHTML='<p class="empty-note">Point at a cell to see who can make it.</p>';
     return;
   }
   const wall=slotWall(d,s);
@@ -1559,8 +1586,8 @@ function renderInspector(d,s){
       (max?'<div class="insp-count"><b>'+w.yes.length+'</b> of '+max+' free'+(w.yes.length===max?" — everyone":"")+'</div>':'')+
     '</div>'+
     (max ? '<div class="insp-names">'+
-      w.yes.map(n=>'<span class="nchip yes">'+esc(n)+'</span>').join("")+
-      w.no.map(n=>'<span class="nchip">'+esc(n)+'</span>').join("")+
+      w.yes.map(n=>chipFor(n,"nchip yes")).join("")+
+      w.no.map(n=>chipFor(n,"nchip")).join("")+
     '</div>' : '<p class="empty-note">No answers yet.</p>');
 }
 
@@ -1812,11 +1839,12 @@ $("peopleList").addEventListener("click",function(e){
   }
 });
 /* Claim a name for this browser. Existing name → adopt it; new name → add it. */
-function claimIdentity(raw){
+function claimIdentity(raw,discord){
   const name=String(raw||"").trim();
   if(!name) return false;
   let p=ev.people.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());
-  if(!p){ p=blankPerson(name); ev.people.push(p); }
+  if(!p){ p=blankPerson(name,dtag(discord)); ev.people.push(p); }
+  else if(dtag(discord)) p.discord=dtag(discord);
   saveClaim(p.name);
   me=p.id; borrowing=false; minePending=true;
   undoStack.length=0; redoStack.length=0;
@@ -1824,15 +1852,15 @@ function claimIdentity(raw){
   return true;
 }
 function addPerson(){
-  const inp=$("addName"), name=inp.value.trim();
+  const inp=$("addName"), dsc=$("addDiscord"), name=inp.value.trim();
   if(!name){ inp.focus(); return; }
 
   /* First name typed on this device is YOU. After that you're adding other
      people — which must never quietly reassign who this browser is. */
   if(!myPerson()){
-    if(!claimIdentity(name)){ inp.focus(); return; }
-    inp.value="";
-    toast("You're in — drag across the grid to schedule when you're free");
+    if(!claimIdentity(name,dsc.value)){ inp.focus(); return; }
+    inp.value=""; dsc.value="";
+    toast("You're in — drag the grid to mark when you're free");
     return;
   }
   const dupe=ev.people.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());
@@ -1845,12 +1873,14 @@ function addPerson(){
   /* You added them because you're about to fill in THEIR times — so select them
      straight away, with the banner up. Leaving you on your own row is how you
      end up overwriting yourself by accident. */
-  const np=blankPerson(name); ev.people.push(np);
-  inp.value=""; saveLocal();
+  const np=blankPerson(name,dsc.value); ev.people.push(np);
+  inp.value=""; dsc.value=""; saveLocal();
   startBorrow(np.id);
 }
 $("btnAdd").addEventListener("click",addPerson);
 $("addName").addEventListener("keydown",e=>{ if(e.key==="Enter") addPerson(); });
+$("addDiscord").addEventListener("keydown",e=>{ if(e.key==="Enter") addPerson(); });
+$("gateDiscord").addEventListener("keydown",e=>{ if(e.key==="Enter") $("gateGo").click(); });
 $("sbPaint").addEventListener("click",()=>{ if(me) setPane("people"); else openGate(); });
 
 /* ---- borrow mode: deliberately editing someone else ---- */
@@ -1878,20 +1908,20 @@ function openGate(){
   $("gateExisting").hidden = !others.length;
   $("gateNames").innerHTML = others.map(p=>
     '<button class="gate-name" data-claim="'+esc(p.name)+'">'+esc(p.name)+'</button>').join("");
-  $("gateName").value="";
+  $("gateName").value=""; $("gateDiscord").value="";
   $("gate").hidden=false;
   setTimeout(()=>$("gateName").focus(),30);
 }
 function closeGate(){ $("gate").hidden=true; }
 $("gateGo").addEventListener("click",function(){
-  if(!claimIdentity($("gateName").value)){ $("gateName").focus(); return; }
-  closeGate(); toast("You're in — drag across the grid to schedule when you're free");
+  if(!claimIdentity($("gateName").value,$("gateDiscord").value)){ $("gateName").focus(); return; }
+  closeGate(); toast("You're in — drag the grid to mark when you're free");
 });
 $("gateName").addEventListener("keydown",e=>{ if(e.key==="Enter") $("gateGo").click(); });
 $("gateNames").addEventListener("click",function(e){
   const b=e.target.closest("[data-claim]"); if(!b) return;
   claimIdentity(b.dataset.claim); closeGate();
-  toast("Welcome back — this browser is now locked to "+b.dataset.claim);
+  toast("Welcome back, "+b.dataset.claim);
 });
 $("gateSkip").addEventListener("click",closeGate);
 $("gate").addEventListener("pointerdown",e=>{ if(e.target===$("gate")) closeGate(); });
@@ -1964,7 +1994,7 @@ function setPick(di,a,b){
   ev.pick={di:di,a:a,b:b}; eventDirty=true;
   saveLocal(); render();
   const w=blockWall({di:di,a:a,b:b});
-  toast("Locked "+w.day+" "+w.from+" — everyone opening the link now sees it");
+  toast("Locked "+w.day+" "+w.from);
 }
 function clearPick(){
   ev.pick=null; eventDirty=true; saveLocal(); render();
@@ -2127,7 +2157,7 @@ $("btnWipe").addEventListener("click",function(){
   askConfirm({
     kicker:"Clear saved data",
     title:"Clear everything on this device?",
-    body:"Every event and claimed name stored in this browser is deleted, and you start on a fresh event. Links other people already hold are unaffected.",
+    body:"Deletes every event and name saved in this browser. Shared links keep working.",
     ok:"Clear it all",
     onOk:function(){
       try{
@@ -2180,6 +2210,7 @@ $("btnEdit2").addEventListener("click",()=>openSheet("edit"));
 
   const mine=myPerson();
   if(mine) me=mine.id;
+  await probeDiscord();
   setPane("best");
   invalidateView(); render();
   const first=$("grid").querySelector(".g-slot");
