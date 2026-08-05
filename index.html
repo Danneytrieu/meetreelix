@@ -357,6 +357,12 @@ input,select{font:inherit;color:inherit}
 .person.active .pdot{background:var(--volt)}
 .pname{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
 .person.active .pname{font-weight:600}
+.person.editing{background:#2c1f08;box-shadow:inset 0 0 0 1px #5a4420}
+.person.editing .pdot{background:var(--amber)}
+.editing-chip{
+  font-family:var(--rs-mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--bg);background:var(--amber);border-radius:3px;padding:1px 5px;flex:none;
+}
 .you-chip{
   font-family:var(--rs-mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   color:var(--bg);background:var(--volt);border-radius:3px;padding:1px 5px;flex:none;
@@ -1452,11 +1458,12 @@ function renderPeople(){
   }
   box.innerHTML = ev.people.map(function(p){
     const n=p.av.reduce((a,b)=>a+(b?1:0),0), hrs=n*ev.slot/60;
-    const mine=isMine(p.id);
-    return '<div class="person'+(p.id===me?" active":"")+'">'+
+    const mine=isMine(p.id), editing=(p.id===me && borrowing);
+    return '<div class="person'+(p.id===me?" active":"")+(editing?" editing":"")+'">'+
       '<span class="pdot"></span>'+
       '<span class="pname">'+esc(p.name)+'</span>'+
       (mine ? '<span class="you-chip">you</span>'
+            : editing ? '<span class="editing-chip">editing</span>'
             : '<button class="pedit" data-borrow="'+p.id+'" title="Fill in '+esc(p.name)+'’s times for them">edit</button>')+
       '<span class="pcount">'+(hrs%1?hrs.toFixed(1):hrs)+'h</span>'+
       '<button class="px" data-del="'+p.id+'" title="Remove '+esc(p.name)+'" aria-label="Remove '+esc(p.name)+'">×</button>'+
@@ -1799,11 +1806,18 @@ function addPerson(){
     return;
   }
   const dupe=ev.people.find(x=>x.name.trim().toLowerCase()===name.toLowerCase());
-  if(dupe){ inp.value=""; toast(dupe.name+" is already a member"); return; }
+  if(dupe){
+    inp.value="";
+    if(isMine(dupe.id)) toast("That's you");
+    else startBorrow(dupe.id);
+    return;
+  }
+  /* You added them because you're about to fill in THEIR times — so select them
+     straight away, with the banner up. Leaving you on your own row is how you
+     end up overwriting yourself by accident. */
   const np=blankPerson(name); ev.people.push(np);
-  const keep=me; me=np.id; minePending=true; queuePush(); me=keep;
-  inp.value=""; saveLocal(); render();
-  toast(name+" added — hover their name and hit edit to fill in their times");
+  inp.value=""; saveLocal();
+  startBorrow(np.id);
 }
 $("btnAdd").addEventListener("click",addPerson);
 $("addName").addEventListener("keydown",e=>{ if(e.key==="Enter") addPerson(); });
