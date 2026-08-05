@@ -239,6 +239,19 @@ input,select{font:inherit;color:inherit}
   touch-action:pan-y;font-variant-numeric:tabular-nums;margin-top:-1px;
 }
 .g-time.is-hour{color:var(--dim);font-weight:600}
+/* Rows are labelled by the time they START, so the window's closing boundary
+   would never be written anywhere. This is that label. */
+.g-close{
+  position:sticky;left:0;z-index:2;background:var(--panel);
+  border-right:1px solid var(--line2);border-top:1px solid var(--line2);
+  font-family:var(--rs-mono);font-size:10px;font-weight:600;color:var(--dim);
+  text-align:right;padding:2px 8px 3px 0;line-height:1;
+  display:flex;align-items:flex-start;justify-content:flex-end;
+  font-variant-numeric:tabular-nums;
+}
+.g-endcap{border-top:1px solid var(--line2);border-left:1px solid var(--line);background:var(--bg)}
+/* when the grid is sized to fill exactly, the per-cell floor must not fight it */
+.grid.fitted .g-slot{min-height:0}
 
 .g-slot{
   min-height:var(--cell-h);border-left:1px solid var(--line);
@@ -1370,18 +1383,28 @@ function blockWall(b){
 function fitRows(){
   const g=$("grid"), sc=$("scroller"); if(!g||!sc) return;
   const S=gridView().rows.length;
-  const fixed = () => { g.style.height=""; g.style.gridTemplateRows="auto repeat("+S+", var(--cell-h))"; };
+  const MIN=20;                       /* must match --cell-h, or the min-height
+                                         floor overflows a fitted grid and the
+                                         last rows become unreachable */
+  const fixed = () => {
+    g.classList.remove("fitted");
+    g.style.height="";
+    g.style.gridTemplateRows="auto repeat("+S+", var(--cell-h)) auto";
+  };
 
   if(window.matchMedia("(max-width:860px)").matches) return void fixed();
 
   const head=sc.querySelector(".g-day");
   const headH=head?head.getBoundingClientRect().height:46;
-  const avail=sc.clientHeight-headH;
+  const close=sc.querySelector(".g-close");
+  const closeH=close?close.getBoundingClientRect().height:15;
+  const avail=sc.clientHeight-headH-closeH;
   if(avail<=0) return void fixed();
 
-  if(avail/S >= 16){
+  if(avail/S >= MIN){
+    g.classList.add("fitted");
     g.style.height=sc.clientHeight+"px";
-    g.style.gridTemplateRows="auto repeat("+S+", minmax(0,1fr))";
+    g.style.gridTemplateRows="auto repeat("+S+", minmax(0,1fr)) auto";
   } else fixed();
 }
 let fitTimer=null;
@@ -1429,7 +1452,7 @@ function renderToolbar(){
 
 function renderGrid(){
   const g=$("grid"), S=slotCount(), v=gridView();
-  g.className = "grid" + (view==="mine" ? " view-mine" : "");
+  g.className = "grid" + (view==="mine" ? " view-mine" : "") + (g.classList.contains("fitted")?" fitted":"");
   g.style.gridTemplateColumns = "var(--rail-w) repeat("+v.cols.length+", minmax(58px,1fr))";
   const mp = me ? personById(me) : null;
   const pk = pickValid(ev.pick) ? ev.pick : null;
@@ -1466,6 +1489,13 @@ function renderGrid(){
         ' role="gridcell" aria-label="'+esc(DOW[c.dow]+" "+timeLabel(min)+", "+n+" of "+ev.people.length+" free")+'"></div>';
     });
   });
+
+  /* closing boundary — the end of the last slot, so a 9am-9pm event actually
+     says 9 PM somewhere */
+  const endMin = v.rows[v.rows.length-1] + ev.slot;
+  html += '<div class="gcell g-close">'+timeLabel(endMin, endMin%60===0)+'</div>';
+  v.cols.forEach(function(){ html += '<div class="gcell g-endcap"></div>'; });
+
   g.innerHTML = html;
 }
 
