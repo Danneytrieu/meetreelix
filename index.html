@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260806-002748";
+  var BUILD="20260806-004500";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -2061,7 +2061,7 @@ $("vMine").addEventListener("click",()=>setView("mine"));
 /* ---- the festival calendar. PT, because the deadline is PT. ---- */
 const FEST = [
   {k:"reveal",  t:"Program reveal",        d:"2026-08-03", note:"Rules published, first two judges named."},
-  {k:"judge3",  t:"Third judge revealed",  d:"2026-08-05", note:"Watch the festival page."},
+  {k:"judge3",  t:"Third judge revealed",  d:"2026-08-06", note:"Slipped a day from Aug 5. The name changes what the slate should aim at — check the festival page."},
   {k:"open",    t:"Competition opens",     d:"2026-08-07", note:"Submission projects unlock. The generation window starts — nothing made before today counts.", major:true},
   {k:"deadline",t:"Submission deadline",   d:"2026-08-31", time:"23:59", note:"11:59 PM Pacific. Final cut uploaded AND the public social post live.", major:true},
   {k:"screen",  t:"Screening & shortlist", d:"2026-09-01", end:"2026-09-21", note:"Higgsfield checks eligibility, then the creative team picks the shortlist."},
@@ -2257,8 +2257,22 @@ function warJudges(){
   return '<div class="war"><p class="war-kicker">Who decides</p><h2>Study the room before you pitch it</h2>'+
     '<p class="lede">Two judges named, a third still unannounced. Between them they represent the two things almost no AI short film has at once: a story that works and a frame that holds together.</p>'+
     cards+
-    '<div class="judge"><div class="judge-head"><div class="judge-ini" style="color:var(--faint)">?</div>'+
-    '<div class="judge-id"><h3>Third judge</h3><p class="role">Announced on the festival site. Update this card the moment the name lands — it may shift the slate.</p></div></div></div>'+
+    '<div class="judge" id="j-third"><div class="judge-head"><div class="judge-ini" style="color:var(--faint)">?</div>'+
+    '<div class="judge-id"><h3>Third judge — revealed Aug 6</h3>'+
+    '<p class="role">Slipped a day from Aug 5. We are not going to guess the name. What we can do is know in advance what each <em>kind</em> of judge would do to the slate, so the retune takes an hour instead of a week.</p></div></div>'+
+    '<div class="judge-body"><h5>If they turn out to be…</h5>'+
+    '<table class="prizes"><thead><tr><th>Their discipline</th><th>What it rewards</th><th style="text-align:right">Rises</th></tr></thead><tbody>'+
+    '<tr><td><b>A narrative director</b></td><td>Story, performance, structure — the existing target, doubled</td><td class="amt">02 · 06</td></tr>'+
+    '<tr><td><b>An animation director</b></td><td>Stylization stops being a risk and becomes the safest lane in the field</td><td class="amt">05 · 01</td></tr>'+
+    '<tr><td><b>An editor</b></td><td>Pacing and rhythm get real teeth; structural games pay off</td><td class="amt">04 · 03</td></tr>'+
+    '<tr><td><b>A composer or sound designer</b></td><td>The criterion most entries neglect becomes the deciding one</td><td class="amt">all six</td></tr>'+
+    '<tr><td><b>A producer or executive</b></td><td>Commercial legibility — a logline someone can repeat</td><td class="amt">02 · 03 · 06</td></tr>'+
+    '<tr><td><b>An AI-native creator</b></td><td>"Effective use of the medium" gets weighted like it means something</td><td class="amt">04 · 05</td></tr>'+
+    '</tbody></table>'+
+    '<p style="margin-top:14px">Two of these move nothing — a narrative director or a producer just reinforces what Catmull and Papamichael already want. Two of them would genuinely change our ranking. <strong>Nobody retunes the slate until the name is real.</strong> Tuning a concept against an imagined judge is the exact mistake we built this room to avoid.</p>'+
+    '<h5>The one that is true regardless</h5>'+
+    '<p>A third judge means a third way to be forgiven, not a third bar to clear. Jurors argue for what they love. A film that is <em>excellent at one thing</em> and competent elsewhere beats a film that is uniformly good — because it gives one juror something to fight for in the room.</p>'+
+    '</div></div>'+
     '<hr class="war-rule">'+
     '<h3>Where the two of them overlap</h3>'+
     '<p>This is the narrow target. Catmull will forgive an imperfect frame for a story that moves him. Papamichael will forgive a small story told with a real eye. <strong>A film that does both wins.</strong></p>'+
@@ -2458,7 +2472,7 @@ function warSide(mode){
     '<h6>Note</h6><p class="rs-faint" style="font-size:11.5px;line-height:1.55">Dates can only be extended, never shortened.</p></div>';
 
   if(mode==="judges") return '<div class="war-side"><h6>The panel</h6><ul class="toclist">'+
-    JUDGES.map(j=>'<li><a data-jump="#j-'+j.key+'">'+esc(j.name)+'</a></li>').join("")+'</ul>'+
+    JUDGES.map(j=>'<li><a data-jump="#j-'+j.key+'">'+esc(j.name)+'</a></li>').join("")+'<li><a data-jump="#j-third">Third judge — Aug 6</a></li></ul>'+
     '<h6>The four criteria</h6>'+
     '<div class="sidefact"><b>Directing &amp; Storytelling</b><span>Narrative clarity, emotional impact, point of view.</span></div>'+
     '<div class="sidefact"><b>Visual Craft</b><span>Composition, cinematography, world-building, coherence.</span></div>'+
