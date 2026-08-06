@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260805-235446";
+  var BUILD="20260806-002748";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -2488,7 +2488,7 @@ function warSide(mode){
 
 /* ---- mode switching ---- */
 const MODES=[
-  ["schedule","modeSchedule","Best times"],
+  ["schedule","modeSchedule","Schedule"],
   ["timeline","modeTimeline","The clock"],
   ["judges",  "modeJudges",  "The judges"],
   ["rules",   "modeRules",   "The rules"],
@@ -2514,7 +2514,7 @@ function setMode(m){
   }
   side.hidden=sched;
 
-  if(sched){ setPane(pane||"best"); $("sideTitle").textContent="Best times"; renderGrid&&renderGrid(); }
+  if(sched){ setPane(pane||"people"); renderGrid&&renderGrid(); }
   else{
     const label=(MODES.find(x=>x[0]===m)||[])[2]||"";
     $("sideTitle").textContent=label; $("sideNote").textContent="";
