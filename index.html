@@ -10,7 +10,7 @@
    channel to hard-refresh is not a plan. Compare the build against an
    uncached stamp and reload once if they differ. */
 (function(){
-  var BUILD="20260806-004500";
+  var BUILD="20260808-0030";
   window.MEETREELIX_BUILD=BUILD;
   try{
     fetch("version.txt?_="+Date.now(),{cache:"no-store"}).then(function(r){return r.text();})
@@ -783,6 +783,17 @@ a.rs-btn{text-decoration:none}
 .cmeta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px}
 .cmeta span{font-family:var(--rs-mono);font-size:10px;color:var(--dim);background:var(--bg2);
   border:1px solid var(--line);border-radius:5px;padding:3px 8px}
+/* Three jurors, three to fill. A concept with one empty column is not
+   disqualified — it just has nobody in the room arguing for it. */
+.jurybar{display:flex;flex-wrap:wrap;gap:16px;padding:11px 13px;margin-bottom:13px;
+  border:1px solid var(--line);border-radius:var(--rs-radius);background:var(--bg2)}
+.jb{display:flex;align-items:center;gap:7px}
+.jb b{font-family:var(--rs-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);font-weight:400}
+.pips{display:inline-flex;gap:3px}
+.pips u{width:13px;height:4px;border-radius:2px;background:var(--line2);text-decoration:none;display:block}
+.pips u.on{background:var(--volt)}
+
 .cwhy{border-top:1px solid var(--line);padding-top:13px}
 .cwhy b{font-family:var(--rs-mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;
   color:var(--volt);display:block;margin-bottom:6px}
@@ -2059,44 +2070,48 @@ $("vMine").addEventListener("click",()=>setView("mine"));
 /* esc() is already defined further up — reuse it rather than shadowing it. */
 
 /* ---- the festival calendar. PT, because the deadline is PT. ---- */
+/* Rescheduled by Higgsfield on Aug 7 — "same contest, more time to prepare".
+   Everything below is from the Official Rules timeline, not the marketing page. */
 const FEST = [
   {k:"reveal",  t:"Program reveal",        d:"2026-08-03", note:"Rules published, first two judges named."},
-  {k:"judge3",  t:"Third judge revealed",  d:"2026-08-06", note:"Slipped a day from Aug 5. The name changes what the slate should aim at — check the festival page."},
-  {k:"open",    t:"Competition opens",     d:"2026-08-07", note:"Submission projects unlock. The generation window starts — nothing made before today counts.", major:true},
-  {k:"deadline",t:"Submission deadline",   d:"2026-08-31", time:"23:59", note:"11:59 PM Pacific. Final cut uploaded AND the public social post live.", major:true},
-  {k:"screen",  t:"Screening & shortlist", d:"2026-09-01", end:"2026-09-21", note:"Higgsfield checks eligibility, then the creative team picks the shortlist."},
-  {k:"jury",    t:"Jury review",           d:"2026-09-22", end:"2026-09-28", note:"Catmull, Papamichael and the third judge choose 1st / 2nd / 3rd and ten Honorable Mentions."},
-  {k:"winners", t:"Winners announced",     d:"2026-09-29", note:"Last week of September. Exact date to be confirmed."}
+  {k:"judge3",  t:"Paul W. S. Anderson named", d:"2026-08-06", note:"The third judge, and the one who most changes what we should make."},
+  {k:"delay",   t:"Start pushed to Aug 10", d:"2026-08-07", note:"Higgsfield moved the opening back three days and the deadline back three. Three extra days to prepare — and preparation is the only thing you may legally do before the gun."},
+  {k:"open",    t:"Competition opens",     d:"2026-08-10", note:"Submission projects unlock. The generation window starts — nothing made before today counts.", major:true},
+  {k:"deadline",t:"Submission deadline",   d:"2026-09-03", time:"23:59", note:"11:59 PM Pacific. Final cut uploaded AND the public social post live.", major:true},
+  {k:"screen",  t:"Screening & shortlist", d:"2026-09-04", end:"2026-09-24", note:"Higgsfield checks eligibility, then the creative team picks the shortlist."},
+  {k:"jury",    t:"Jury review",           d:"2026-09-25", end:"2026-10-01", note:"Catmull, Papamichael and Anderson choose 1st / 2nd / 3rd and ten Honorable Mentions."},
+  {k:"winners", t:"Winners announced",     d:"2026-10-02", note:"First week of October. Exact date to be confirmed."}
 ];
 /* Pacific is UTC-7 in August/September (PDT). */
 const ptDate = (d,time) => new Date(d+"T"+(time||"00:00")+":00-07:00");
 const DAY = 864e5;
 
 function festState(){
-  const now = Date.now();
-  const open = ptDate("2026-08-07").getTime();
-  const dead = ptDate("2026-08-31","23:59").getTime();
-  const end  = ptDate("2026-09-29").getTime();
+  const now  = Date.now();
+  const open = ptDate("2026-08-10").getTime();
+  const dead = ptDate("2026-09-03","23:59").getTime();
+  const jury = ptDate("2026-09-25").getTime();
+  const end  = ptDate("2026-10-02").getTime();
+  const born = ptDate("2026-08-03").getTime();
 
   let phase, sub, target, targetLabel;
   if(now < open){
-    phase="Before the gun"; sub="Plan freely — but nothing you generate now can be used.";
+    phase="Before the gun"; sub="Write, cast, storyboard, argue. Generate nothing — none of it would count.";
     target=open; targetLabel="until the window opens";
   } else if(now < dead){
     phase="Generation window"; sub="Everything in your film must be born inside this window.";
     target=dead; targetLabel="until the deadline";
-  } else if(now < ptDate("2026-09-22").getTime()){
+  } else if(now < jury){
     phase="Screening & shortlist"; sub="Out of your hands. Keep the social post public.";
-    target=ptDate("2026-09-22").getTime(); targetLabel="until jury review";
+    target=jury; targetLabel="until jury review";
   } else if(now < end){
-    phase="Jury review"; sub="The jury is watching the shortlist right now.";
+    phase="Jury review"; sub="Catmull, Papamichael and Anderson are watching the shortlist right now.";
     target=end; targetLabel="until winners";
   } else {
     phase="Results"; sub="Winners announced."; target=null; targetLabel="";
   }
 
-  const span = end - ptDate("2026-08-03").getTime();
-  const pct  = Math.max(0, Math.min(100, ((now - ptDate("2026-08-03").getTime())/span)*100));
+  const pct  = Math.max(0, Math.min(100, ((now - born)/(end - born))*100));
   const days = target ? Math.max(0, Math.ceil((target-now)/DAY)) : 0;
   return {now,phase,sub,days,targetLabel,pct,open,dead};
 }
@@ -2141,6 +2156,19 @@ const JUDGES = [
     ],
     win:["Light with a source you can point at","Faces, close, held long enough to land","Coverage that actually cuts — eyelines, geometry, screen direction","Restraint: one location used honestly beats five used badly","Texture, grain, imperfection — the look of a real lens"],
     lose:["The unmotivated floating push-in (the default AI grammar)","Panning wide shots — he explicitly rejected this on <i>Ford v Ferrari</i> as the language of sports broadcasts and car commercials","Mixed colour temperature with no justification","Geometry that changes between cuts","Coverage with no master — shots that never establish a space"]
+  },
+  {
+    key:"anderson", ini:"PA", name:"Paul W. S. Anderson",
+    role:"Director · the <i>Resident Evil</i> franchise, <i>Mortal Kombat</i>, <i>Event Horizon</i>, <i>Alien vs. Predator</i> · thirty years of box-office genre cinema · the director who took video games seriously before anyone else did",
+    films:["Resident Evil ×4","Mortal Kombat","Event Horizon","Alien vs. Predator","Death Race","Pompeii","Monster Hunter"],
+    read:"Not Paul <i>Thomas</i> Anderson — a completely different filmmaker, and confusing them will cost you. This is the genre craftsman: <b>kinetic, physical, unapologetic</b>. He is the reason the jury is no longer a two-man conversation about restraint. He has spent thirty years making films where something is hunting someone through a space, and he is unusually rigorous about making that space <b>readable</b>. He insists his own production designers and cinematographers play the games he is adapting, because he wants the DNA, not the logo.",
+    quotes:[
+      {q:"Pushing through a proscenium arch, into a scene.", c:"on doorways, and why they run through all his films"},
+      {q:"No slow motion — the action is bone-crunchingly fast.", c:"on shooting the later Resident Evil films"},
+      {q:"Big, gritty, real locations.", c:"on choosing location work over stage builds"}
+    ],
+    win:["Genre played straight — horror that is scary, action that is fast, no apology and no irony","<b>Readable geography</b> — the audience always knows where the threat is and where the exit is","Doorways, thresholds, descents: space that reveals itself as you move through it","A physical, present danger with real consequences","Production design that builds a world, not a backdrop","Momentum — a film that is going somewhere at speed"],
+    lose:["A mood piece with no engine","Slow motion used to manufacture weight","Action you cannot follow — cut so fast or so close that the space dissolves","A concept that stays a concept and never becomes a scene","Pastiche of his own films — he wants the DNA, not the costume"]
   }
 ];
 
@@ -2150,7 +2178,7 @@ const GATES = [
   {n:"02", cls:"hot",  t:"Any video or image generated off-platform",
    s:"All visual generation must happen on higgsfield.ai. Any model on the platform counts; nothing off it does. Audio is fully exempt — music, VO, lipsync and sound design can be made anywhere."},
   {n:"03", cls:"hot",  t:"Reusing assets you already had",
-   s:"Everything visual must be generated from scratch inside the window — Aug 7 to Aug 31. Your own earlier Higgsfield projects are off-limits. Official Higgsfield open-source packs (HellGrind, Zephyr, Academy drops) are exempt."},
+   s:"Everything visual must be generated from scratch inside the window — Aug 10 to Sep 3. Your own earlier Higgsfield projects are off-limits. Official Higgsfield open-source packs (HellGrind, Zephyr, Academy drops) are exempt."},
   {n:"04", cls:"hot",  t:"Assets missing from the submission project",
    s:"The audit compares your final cut against the project's own generation history. \"If a project does not retain enough of its underlying assets to support that check, Higgsfield may mark the Entry non-eligible.\" Never clean up a project."},
   {n:"05", cls:"warn", t:"Missing watermark or packshot",
@@ -2166,47 +2194,53 @@ const GATES = [
 ];
 
 const SLATE = [
-  {no:"01", key:"keeper", title:"KEEPER", fit:"Catmull lane",
+  {no:"01", jury:{ec:3,pp:2,pa:1}, key:"keeper", title:"KEEPER", fit:"Catmull lane",
    art:"art/keeper.jpg",
    log:"A lighthouse automaton has kept the lamp burning for a ship that stopped coming forty years ago. The night the lamp finally dies, it has to decide whether to become the light.",
    meta:["No dialogue","1 location","1 character","~38 shots","Stylized or photoreal"],
    why:"This is the <i>Luxo Jr.</i> lineage — a non-human object given a want, and Catmull invented the category in 1986. No dialogue means no lipsync risk and no language barrier for a global jury. One location and one character is the smallest drift surface on the slate.",
    risk:"The character design has to be locked cold in week one. If the automaton drifts, there is nothing else on screen to carry you."},
 
-  {no:"02", key:"quiet", title:"QUIET", fit:"Papamichael lane",
+  {no:"02", jury:{ec:2,pp:3,pa:1}, key:"quiet", title:"QUIET", fit:"Papamichael lane",
    art:"art/quiet.jpg",
    log:"A father and his grown daughter share a kitchen table at dawn. He was bitten four hours ago. She hasn't noticed yet. He has already decided how the morning ends.",
    meta:["Dialogue","1 location","2 characters","~42 shots","Photoreal"],
    why:"Your zombie idea with the spectacle surgically removed — the infection never appears on screen. Two faces, one window, motivated light, a decision instead of a creature. This is precisely the register Papamichael has built a career defending: <i>embracing the limitations of the location.</i> Genre on the label, humanism in the execution.",
    risk:"Performance-dependent and dialogue-heavy. Lipsync has to be clean or the whole thing collapses. Needs the strongest script on the slate."},
 
-  {no:"03", key:"lastshift", title:"THE LAST SHIFT", fit:"Payne / Nebraska lane",
+  {no:"03", jury:{ec:2,pp:3,pa:2}, key:"lastshift", title:"THE LAST SHIFT", fit:"Payne / Nebraska lane",
    art:"art/lastshift.jpg",
    log:"The night the interstate is decommissioned, a toll booth operator works her final eight hours. At 3 a.m. a car pulls up that shouldn't exist.",
    meta:["Sparse dialogue","2 locations","2 characters","~40 shots","Photoreal"],
    why:"An ordinary job on an extraordinary night — Nebraska-scale humanism with exactly one genre turn, held until the two-minute mark. Both judges reward a small life with something enormous underneath it.",
    risk:"Exterior night plus a vehicle is the highest drift surface here. Budget extra generations for the car."},
 
-  {no:"04", key:"rerun", title:"RERUN", fit:"Medium lever",
+  {no:"04", jury:{ec:2,pp:2,pa:1}, key:"rerun", title:"RERUN", fit:"Medium lever",
    art:"art/rerun.jpg",
    log:"A man replays the last conversation he had with his brother. Each time he runs it, the room remembers a little less — until only the sentence he can't forgive is still in focus.",
    meta:["Voice-over","1 location","2 characters","~34 shots","Degrading by design"],
    why:"Criterion 4 is <b>\"effective use of the medium\"</b> and almost nobody will pull this lever. Generation drift stops being a defect and becomes the story — a camera cannot shoot a memory decaying, and animation wouldn't bother. Repetition also buys you consistency for free.",
    risk:"Conceptual films die when they impress but don't move. It has to land emotionally by minute two, or it's a tech demo with a sad voice-over."},
 
-  {no:"05", key:"paper", title:"PAPER CITIES", fit:"Animation lane",
+  {no:"05", jury:{ec:3,pp:1,pa:2}, key:"paper", title:"PAPER CITIES", fit:"Animation lane",
    art:"art/paper.jpg",
    log:"A seven-year-old's crayon map is the only record of a neighborhood being demolished. As the bulldozers arrive, the drawing starts defending itself.",
    meta:["Minimal dialogue","Stylized 2D","2 characters","~44 shots","Full animation"],
    why:"Catmull's native language. Full stylization sidesteps the uncanny valley that will sink half the field, and child's-eye emotional logic is the exact grammar he spent thirty years refining. Also the most visually distinctive thing you could put in front of a jury watching photoreal entry after photoreal entry.",
    risk:"Style consistency across 44 shots is the entire game. Lock the look with a style sheet before a single shot is generated."},
 
-  {no:"06", key:"handoff", title:"THE HANDOFF", fit:"Lowest risk",
+  {no:"06", jury:{ec:2,pp:3,pa:2}, key:"handoff", title:"THE HANDOFF", fit:"Lowest risk",
    art:"art/handoff.jpg",
    log:"A rideshare driver picks up a passenger who knows her name, her route, and what she did in 2019. Neither of them gets out of the car.",
    meta:["Dialogue-driven","1 interior","2 characters","~36 shots","Photoreal"],
    why:"<i>\"Have your camera in the right place at the right time and let the actors do the work.\"</i> One interior, two faces, night exteriors passing outside the glass. The smallest drift surface in the slate and the cleanest fit for a cinematographer who shoots people, not places.",
-   risk:"Nowhere to hide. The script has to be genuinely good — this is the concept most exposed by a weak second act."}
+   risk:"Nowhere to hide. The script has to be genuinely good — this is the concept most exposed by a weak second act."},
+  {no:"07", key:"breach", jury:{ec:3,pp:3,pa:3}, title:"BREACH", fit:"Built for all three",
+   art:"art/breach.jpg",
+   log:"A mother and her daughter are barricaded four floors below the roof. Between them and the sky is a stairwell, and something in it that hunts by sound. To get the girl up, the mother has to be the noise.",
+   meta:["Minimal dialogue","1 stairwell","2 characters","~40 shots","Photoreal"],
+   why:"Written after Anderson was named, because nothing else on the slate was built for him. He gets a vertical corridor with a threat and a rule the audience can learn — his native grammar, landing by landing, doorway by doorway. Papamichael gets emergency lighting, one torch and two faces, practical sources only. Catmull gets a parent trading herself for a child, which is the oldest turn there is and still works. The geography comes free: a stairwell is the most readable space in cinema — up is safety, down is death, and nobody has to be told.",
+   risk:"Two, and the second one is measured. A creature is the most expensive thing on earth to keep consistent — design it so you barely see it; sound and reaction carry the scene, which is also what makes it frightening. And the first attempt at this key art was refused by the safety filter for putting a child in visible danger. That will happen again, mid-production, on a clock. Keep the girl out of frame during every threat beat: shoot her reaction, the mother's back, a hand, a shadow. It is the cheaper film and the better one."}
 ];
 
 /* ---- rendering -------------------------------------------------------- */
@@ -2255,34 +2289,37 @@ function warJudges(){
     '</div></div>').join("");
 
   return '<div class="war"><p class="war-kicker">Who decides</p><h2>Study the room before you pitch it</h2>'+
-    '<p class="lede">Two judges named, a third still unannounced. Between them they represent the two things almost no AI short film has at once: a story that works and a frame that holds together.</p>'+
+    '<p class="lede">All three are named. Two of them spent their careers arguing for restraint; the third spent his making things move. That split is the single most important fact about this competition, and it is not the jury we were planning for a week ago.</p>'+
     cards+
-    '<div class="judge" id="j-third"><div class="judge-head"><div class="judge-ini" style="color:var(--faint)">?</div>'+
-    '<div class="judge-id"><h3>Third judge — revealed Aug 6</h3>'+
-    '<p class="role">Slipped a day from Aug 5. We are not going to guess the name. What we can do is know in advance what each <em>kind</em> of judge would do to the slate, so the retune takes an hour instead of a week.</p></div></div>'+
-    '<div class="judge-body"><h5>If they turn out to be…</h5>'+
-    '<table class="prizes"><thead><tr><th>Their discipline</th><th>What it rewards</th><th style="text-align:right">Rises</th></tr></thead><tbody>'+
-    '<tr><td><b>A narrative director</b></td><td>Story, performance, structure — the existing target, doubled</td><td class="amt">02 · 06</td></tr>'+
-    '<tr><td><b>An animation director</b></td><td>Stylization stops being a risk and becomes the safest lane in the field</td><td class="amt">05 · 01</td></tr>'+
-    '<tr><td><b>An editor</b></td><td>Pacing and rhythm get real teeth; structural games pay off</td><td class="amt">04 · 03</td></tr>'+
-    '<tr><td><b>A composer or sound designer</b></td><td>The criterion most entries neglect becomes the deciding one</td><td class="amt">all six</td></tr>'+
-    '<tr><td><b>A producer or executive</b></td><td>Commercial legibility — a logline someone can repeat</td><td class="amt">02 · 03 · 06</td></tr>'+
-    '<tr><td><b>An AI-native creator</b></td><td>"Effective use of the medium" gets weighted like it means something</td><td class="amt">04 · 05</td></tr>'+
-    '</tbody></table>'+
-    '<p style="margin-top:14px">Two of these move nothing — a narrative director or a producer just reinforces what Catmull and Papamichael already want. Two of them would genuinely change our ranking. <strong>Nobody retunes the slate until the name is real.</strong> Tuning a concept against an imagined judge is the exact mistake we built this room to avoid.</p>'+
-    '<h5>The one that is true regardless</h5>'+
-    '<p>A third judge means a third way to be forgiven, not a third bar to clear. Jurors argue for what they love. A film that is <em>excellent at one thing</em> and competent elsewhere beats a film that is uniformly good — because it gives one juror something to fight for in the room.</p>'+
-    '</div></div>'+
     '<hr class="war-rule">'+
-    '<h3>Where the two of them overlap</h3>'+
-    '<p>This is the narrow target. Catmull will forgive an imperfect frame for a story that moves him. Papamichael will forgive a small story told with a real eye. <strong>A film that does both wins.</strong></p>'+
+    '<h3>The one thing all three demand</h3>'+
+    '<p>Their tastes barely overlap. Their <em>craft floor</em> is identical, and it is narrower than it looks: <strong>the audience must always know where they are.</strong></p>'+
     '<div class="wgrid three">'+
-      '<div class="wcard"><span class="tag">Overlap 01</span><h4>Restraint reads as confidence</h4><p>One room used honestly beats five used badly. Both men built careers proving it.</p></div>'+
-      '<div class="wcard"><span class="tag">Overlap 02</span><h4>A held face</h4><p>Catmull needs a character to change. Papamichael shoots the moment it happens. Same shot.</p></div>'+
-      '<div class="wcard"><span class="tag">Overlap 03</span><h4>Craft in service, never on display</h4><p>Neither has ever rewarded a shot that exists to prove a shot was possible.</p></div>'+
+      '<div class="wcard"><span class="tag">Catmull asks</span><h4>Could a child follow it?</h4><p>Emotional and spatial clarity are the same discipline to him. Confusion is a story failure.</p></div>'+
+      '<div class="wcard"><span class="tag">Papamichael asks</span><h4>Do the eyelines cut?</h4><p>Screen direction, a motivated source, a master that establishes the room before you cut inside it.</p></div>'+
+      '<div class="wcard"><span class="tag">Anderson asks</span><h4>Where is the threat?</h4><p>Thirty years of hunting something through a corridor. If the geography dissolves, the scene dies.</p></div>'+
     '</div>'+
-    '<h3>The trap eighty percent of entries will fall into</h3>'+
-    '<p>The <strong>AI cinematic trailer</strong>: forty disconnected five-second beauty shots, a whispered voice-over, ominous strings, endless slow push-ins, no scene, no coverage, no geometry. Catmull has been immune to that since 1986. Papamichael explicitly rejected panning wide shots on <i>Ford v Ferrari</i> as the grammar of sports broadcasts and car commercials. That entire pile eliminates itself at shortlist.</p>'+
+    '<p><strong>Legible space is the whole floor.</strong> It is also the single thing the default AI grammar cannot do — which is why most of the field fails it without noticing.</p>'+
+
+    '<h3>Where they split, and what to do about it</h3>'+
+    '<p>Two of them reward restraint. One rewards momentum. A quiet two-hander in a kitchen now pleases <strong>one juror out of three</strong>; a chase with nobody in it pleases none. The target moved, and it moved toward <strong>genre with a heart and an eye</strong> — a real premise, a character worth losing, and craft that holds up when it moves.</p>'+
+    '<div class="wl"><div class="wl-col"><h6>Now stronger than it was</h6><ul>'+
+      '<li>Horror and sci-fi played <em>straight</em> — Anderson made <i>Event Horizon</i>, and Catmull will still ask what it is about</li>'+
+      '<li>A physical threat with rules the audience can learn</li>'+
+      '<li>Descents, thresholds, doorways — space that reveals itself as you cross it</li>'+
+      '<li>Momentum. A film that is going somewhere at speed</li>'+
+      '<li>World-building, if a person is standing inside it</li></ul></div>'+
+    '<div class="wl-col"><h6>Now weaker than it was</h6><ul>'+
+      '<li>Pure mood. Beautiful, still, and going nowhere</li>'+
+      '<li>Restraint as the entire idea rather than a choice</li>'+
+      '<li>Conceptual films that never become a scene</li>'+
+      '<li>Slow motion doing the work a cut should do</li>'+
+      '<li>Anything that reads as an exercise</li></ul></div></div>'+
+
+    '<h3>The trap most of the field will still fall into</h3>'+
+    '<p>The <strong>AI cinematic trailer</strong>: forty disconnected five-second beauty shots, a whispered voice-over, ominous strings, endless slow push-ins, no scene, no coverage, no geography. Catmull has been immune since 1986. Papamichael rejected panning wide shots on <i>Ford v Ferrari</i> as the grammar of sports broadcasts. Anderson would ask where the threat is and get no answer. <strong>It is now the only thing all three would reject for the same reason.</strong></p>'+
+    '<h3>One more, and it matters more with three</h3>'+
+    '<p>A third juror is a third way to be <em>forgiven</em>, not a third bar to clear. Jurors argue for what they love. A film that is <strong>excellent at one thing</strong> and competent elsewhere beats a film that is uniformly good — because it gives one person in that room something to fight for.</p>'+
     '</div>';
 }
 
@@ -2295,7 +2332,7 @@ function warRules(){
     '<p class="lede">Stage 1 is pure eligibility. No judge sees your work until it clears every one of these. Read this before you plan, not before you submit.</p>'+
     gates+
     '<hr class="war-rule">'+
-    '<h3>⚠ The blocking pre-flight — Aug 7, before a single credit</h3>'+
+    '<h3>⚠ The blocking pre-flight — Aug 10, before a single credit</h3>'+
     '<div class="gate hot"><span class="gate-n">!</span><span class="gate-t"><b>Does a Reelix-driven generation land inside the submission project?</b>'+
     '<span>The rules require your film to be <i>born inside the submission project</i>, and the audit reads that project\'s own generation history. If Reelix generates through the MCP or CLI, those generations may land in your general library instead — which fails the audit. On day one: create the project, fire one Reelix-driven generation, and confirm it appears inside that project with its prompt intact. If it does not, Reelix becomes the planning and assembly layer and generation happens in Cinema Studio. This single test decides the pipeline architecture for every team.</span></span></div>'+
     '<h3>Team structure</h3>'+
@@ -2309,6 +2346,19 @@ function warRules(){
     '</div>';
 }
 
+/* How hard each juror would fight for a concept, 1–3. Our read, not theirs —
+   the point is to see at a glance where the slate is thin. */
+const JURORS=[["ec","Catmull"],["pp","Papamichael"],["pa","Anderson"]];
+function juryBar(j){
+  if(!j) return "";
+  return '<div class="jurybar">'+JURORS.map(function(x){
+    const n=j[x[0]]||0;
+    return '<span class="jb" title="'+x[1]+': '+n+' of 3">'+
+      '<b>'+esc(x[1])+'</b><i class="pips">'+
+      [1,2,3].map(k=>'<u class="'+(k<=n?"on":"")+'"></u>').join("")+'</i></span>';
+  }).join("")+'</div>';
+}
+
 function warSlate(){
   const cards = SLATE.map(c=>
     '<article class="concept" id="c-'+c.key+'">'+
@@ -2319,13 +2369,14 @@ function warSlate(){
       '<div class="concept-body"><h4>'+esc(c.title)+'</h4>'+
         '<p class="concept-log">'+esc(c.log)+'</p>'+
         '<div class="cmeta">'+c.meta.map(m=>'<span>'+esc(m)+'</span>').join("")+'</div>'+
+        juryBar(c.jury)+
         '<div class="cwhy"><b>Why it fits the jury</b><p>'+c.why+'</p>'+
         '<p class="crisk"><b>Risk</b>'+esc(c.risk)+'</p></div>'+
       '</div>'+
     '</article>').join("");
 
-  return '<div class="war"><p class="war-kicker">Our concepts</p><h2>Six shapes built for these two men</h2>'+
-    '<p class="lede">Every one of these is deliberately small. Three minutes, few locations, few characters — because drift is the enemy, and because restraint is what this jury actually rewards. Pick per team; no two teams take the same lane.</p>'+
+  return '<div class="war"><p class="war-kicker">Our concepts</p><h2>Seven shapes, scored against the real jury</h2>'+
+    '<p class="lede">Six of these were written for a two-man jury that wanted restraint. Anderson changed that, so every card now carries our read of how hard each juror would fight for it — and 07 exists because none of the other six were built for him. All still deliberately small: drift is the enemy. One lane per team, no two the same.</p>'+
     cards+
     '<hr class="war-rule">'+
     '<h3>How to run the teams</h3>'+
@@ -2466,13 +2517,13 @@ function warSide(mode){
   if(mode==="timeline") return '<div class="war-side"><h6>Right now</h6>'+
     '<div class="sidebig">'+s.days+' days</div><p class="rs-faint" style="font-size:11.5px;margin:4px 0 0">'+esc(s.targetLabel)+'</p>'+
     '<h6>Fixed points</h6>'+
-    '<div class="sidefact"><b>Aug 7</b><span>Window opens. Nothing before this counts.</span></div>'+
-    '<div class="sidefact"><b>Aug 31, 11:59pm PT</b><span>Film uploaded and social post live.</span></div>'+
-    '<div class="sidefact"><b>Late Sep</b><span>Fourteen winners.</span></div>'+
+    '<div class="sidefact"><b>Aug 10</b><span>Window opens. Nothing before this counts.</span></div>'+
+    '<div class="sidefact"><b>Sep 3, 11:59pm PT</b><span>Film uploaded and social post live.</span></div>'+
+    '<div class="sidefact"><b>First week of Oct</b><span>Fourteen winners.</span></div>'+
     '<h6>Note</h6><p class="rs-faint" style="font-size:11.5px;line-height:1.55">Dates can only be extended, never shortened.</p></div>';
 
-  if(mode==="judges") return '<div class="war-side"><h6>The panel</h6><ul class="toclist">'+
-    JUDGES.map(j=>'<li><a data-jump="#j-'+j.key+'">'+esc(j.name)+'</a></li>').join("")+'<li><a data-jump="#j-third">Third judge — Aug 6</a></li></ul>'+
+  if(mode==="judges") return '<div class="war-side"><h6>The panel — all three named</h6><ul class="toclist">'+
+    JUDGES.map(j=>'<li><a data-jump="#j-'+j.key+'">'+esc(j.name)+'</a></li>').join("")+'</ul>'+
     '<h6>The four criteria</h6>'+
     '<div class="sidefact"><b>Directing &amp; Storytelling</b><span>Narrative clarity, emotional impact, point of view.</span></div>'+
     '<div class="sidefact"><b>Visual Craft</b><span>Composition, cinematography, world-building, coherence.</span></div>'+
