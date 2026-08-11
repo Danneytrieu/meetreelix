@@ -3147,6 +3147,13 @@ $("btnSave").addEventListener("click",function(){
         }
       });
       p.av=next;
+      /* The remap above only fixed the copy in this tab. The server still holds
+         this row packed against the OLD window, and a bit index only names a
+         date for as long as the day list stands still — so the next poll would
+         unpack those old bits against the new window and slide every mark onto
+         whatever date now sits in that column. Marking the row dirty writes the
+         remap back, and shields it from the poll until that write lands. */
+      markDirty(p.id);
     });
     ev.title=title||ev.title; ev.days=draft.days; ev.start=start; ev.end=end; ev.slot=slot;
     ev.pick=null;   /* slot coordinates no longer mean what they did */
@@ -3164,6 +3171,11 @@ $("btnSave").addEventListener("click",function(){
       if(last && claimIdentity(last.name,last.discord)) toast("Event created");
       else { openGate(); toast("Event created"); }
     });
+  } else {
+    /* The window and the rows packed against it have to travel together. The
+       usual half-second debounce is long enough for someone else's poll to read
+       the new window beside the old rows and paint everyone on the wrong day. */
+    pushNow();
   }
 });
 $("btnCancel").addEventListener("click",closeSheet);
