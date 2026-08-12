@@ -1,0 +1,512 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE PINK DOOR — three ways to build it</title>
+<style>
+:root{
+  --bg:#faf7f2; --surface:#fff; --surface-2:#f3eee6; --text:#1c1a17; --dim:#5c554b;
+  --faint:#8a8175; --border:#e0d8cb; --rule:#cfc5b4;
+  --pink:#d6467f; --pink-soft:#fbe7ef;
+  --good:#2f7d59; --good-soft:#e4f2ea;
+  --warn:#b06a12; --warn-soft:#fbeedb;
+  --hot:#c0392b; --hot-soft:#fbe6e3;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#14120f; --surface:#1c1917; --surface-2:#231f1b; --text:#f0ebe3; --dim:#b3a99a;
+    --faint:#8b8172; --border:#332d26; --rule:#3d362d;
+    --pink:#ff7aae; --pink-soft:#33141f;
+    --good:#5fc292; --good-soft:#14261d;
+    --warn:#e0a24c; --warn-soft:#2b2013;
+    --hot:#ef7a6a; --hot-soft:#2c1714;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.65 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  padding:0 20px 100px;
+}
+.wrap{max-width:900px;margin:0 auto}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+
+header.mast{padding:60px 0 30px;border-bottom:3px double var(--rule);margin-bottom:40px}
+.kicker{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--pink);margin:0 0 18px}
+.backlink{margin:-8px 0 18px;font:500 12px/1 ui-monospace,Menlo,monospace}
+.backlink a{color:var(--faint);text-decoration:none;border-bottom:1px solid var(--border)}
+h1{font-size:clamp(32px,6.5vw,54px);line-height:1.03;margin:0 0 16px;letter-spacing:-.02em;font-weight:600}
+h1 em{color:var(--pink);font-style:normal}
+.standfirst{font-size:18.5px;line-height:1.55;color:var(--dim);margin:0 0 24px;max-width:64ch}
+.byline{font:500 12px/1.6 ui-monospace,Menlo,monospace;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 18px;padding-top:16px;border-top:1px solid var(--border)}
+.byline b{color:var(--text);font-weight:600}
+
+.locked{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--good);border-radius:4px;padding:22px 26px;margin:0 0 44px}
+.locked h2{margin:0 0 10px;font-size:19px}
+.locked p{margin:0 0 10px;color:var(--dim);font-size:15.5px}
+.locked ul{margin:0;padding-left:20px}
+.locked li{color:var(--dim);font-size:15px;margin-bottom:6px}
+.locked li b{color:var(--text)}
+
+section{margin:0 0 54px}
+h2.sec{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:0 0 8px}
+h3.big{font-size:clamp(23px,4.4vw,31px);line-height:1.15;margin:0 0 14px;letter-spacing:-.015em;font-weight:600}
+.lede{font-size:17px;color:var(--dim);margin:0 0 28px;max-width:66ch}
+p{max-width:70ch}
+
+/* option card */
+.opt{background:var(--surface);border:1px solid var(--border);border-radius:5px;overflow:hidden;margin:0 0 26px}
+.opt-head{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.opt-letter{
+  flex:0 0 44px;height:44px;display:grid;place-items:center;border-radius:4px;
+  background:var(--pink);color:#fff;font:600 20px/1 ui-monospace,Menlo,monospace;
+}
+.opt-t{flex:1;min-width:220px}
+.opt-t h4{margin:0 0 4px;font-size:23px;letter-spacing:-.015em}
+.opt-t .pov{margin:0;font:600 11px/1.5 ui-monospace,Menlo,monospace;letter-spacing:.13em;text-transform:uppercase;color:var(--pink)}
+.opt-body{padding:22px 26px}
+.opt-body > p{margin:0 0 16px;font-size:16px;color:var(--dim)}
+.opt-body > p strong{color:var(--text)}
+h5.lbl{margin:22px 0 10px;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+
+.dia{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 4px}
+.dia pre{margin:0;font:12px/1.6 ui-monospace,"SF Mono",Menlo,Consolas,monospace;white-space:pre;color:var(--text)}
+
+/* jury bar */
+.jury{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 4px}
+.jbox{flex:1;min-width:130px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:12px 14px}
+.jbox .who{font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:8px}
+.pips{display:flex;gap:4px;margin-bottom:8px}
+.pip{width:26px;height:6px;border-radius:3px;background:var(--border)}
+.pip.on{background:var(--pink)}
+.jbox .note{font-size:13px;line-height:1.45;color:var(--dim)}
+
+.wr{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+@media(max-width:600px){.wr{grid-template-columns:1fr}}
+.wr div h6{margin:0 0 8px;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.15em;text-transform:uppercase}
+.wr .w h6{color:var(--good)} .wr .r h6{color:var(--hot)}
+.wr ul{margin:0;padding-left:17px}
+.wr li{font-size:14px;line-height:1.55;margin-bottom:6px;color:var(--dim)}
+
+.build{display:inline-flex;align-items:center;gap:9px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:7px 11px;border-radius:3px}
+.build.sm{background:var(--good-soft);color:var(--good)}
+.build.md{background:var(--warn-soft);color:var(--warn)}
+.build.lg{background:var(--hot-soft);color:var(--hot)}
+
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:4px;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;min-width:620px;background:var(--surface);font-size:14.5px}
+th,td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:600 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);background:var(--surface-2);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+.rec-row{background:var(--pink-soft)}
+
+.rec{background:var(--surface);border:1px solid var(--pink);border-left:5px solid var(--pink);border-radius:4px;padding:24px 26px;margin:0 0 22px}
+.rec .tag{display:inline-block;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--pink);padding:6px 9px;border-radius:3px;margin-bottom:14px}
+.rec h4{margin:0 0 12px;font-size:21px}
+.rec p{margin:0 0 12px;color:var(--dim);font-size:16px}
+.rec p:last-child{margin:0}
+.rec strong{color:var(--text)}
+
+.credit{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:16px 20px;margin:0 0 30px;font-size:15px;color:var(--dim)}
+.credit b{color:var(--text)}
+
+footer{border-top:3px double var(--rule);margin-top:56px;padding-top:22px;font-size:13.5px;color:var(--faint)}
+footer p{margin:0 0 8px;max-width:70ch}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="kicker">Team 3 · three setups for the same film</p>
+  <p class="backlink"><a href="./pink-door.html">&larr; the concept review</a> · <a href="./">the war room</a></p>
+  <h1>THE PINK DOOR<br>— <em>three ways to build it</em></h1>
+  <p class="standfirst">
+    Same premise, same door, same monkeys, same ending image. Three genuinely different
+    setups — different point of view, different production size, different juror fighting
+    for it in the room. Pick the trade, not the pitch.
+  </p>
+  <p class="byline">
+    <span><b>Prepared</b> 2026-08-12</span>
+    <span><b>Deadline</b> Sep 3, 11:59pm PT · 22 days</span>
+    <span><b>Recommendation</b> Option C</span>
+  </p>
+</header>
+
+<div class="credit">
+  <b>Built on Dan's notes.</b> The escalation ladder (phones out → shopkeepers and security →
+  animal control with nets), the closing door as a clock, and the hesitant monkey the boy has to
+  <i>convince</i> to jump — all Dan's, all adopted into every option below. His beat sheet's best
+  idea, <b>the closest monkey who never came through and waits by the door</b>, became the spine of
+  Option A and a cutaway in the other two.
+</div>
+
+<div class="locked">
+  <h2>Locked in all three — don't re-litigate these</h2>
+  <p>Already agreed in the channel, and each one removes a way to lose:</p>
+  <ul>
+    <li><b>Wordless.</b> No lipsync risk, no language barrier for a global jury, and the sound design carries — our strongest criterion.</li>
+    <li><b>Stylized, not photoreal.</b> Catmull's first language, and it sidesteps the uncanny valley that sinks half the field.</li>
+    <li><b>One style, worlds separated by palette and light</b> — not three different art styles. Three styles reads as craft <i>on display</i>, which is the one thing all three judges reject.</li>
+    <li><b>Three named monkeys with distinct silhouettes</b>, one blessed reference each. A troop is an unbounded cast.</li>
+    <li><b>Somebody pays something.</b> Non-negotiable — it is Catmull's primary rejection criterion.</li>
+    <li><b>≥3:00 runtime</b> (target 3:20), and a real master shot for any sequence with more than two characters in it.</li>
+  </ul>
+  <p style="margin-top:14px">
+    <b>And the rules bind all three.</b> Every frame generated on higgsfield.ai, from scratch,
+    inside <b>Aug 10 → Sep 3</b>. Audio is the only exemption — make it anywhere, but upload every
+    file into the submission project. 16:9 or 21:9. Never clean up the project. The gate-by-gate
+    read on each option is <a href="#rules" style="color:var(--pink)">below</a>, and it is the
+    thing that actually separates them.
+  </p>
+</div>
+
+<!-- ============ OPTION A ============ -->
+<section>
+  <article class="opt">
+    <div class="opt-head">
+      <div class="opt-letter">A</div>
+      <div class="opt-t">
+        <h4>THE WAITING ONE</h4>
+        <p class="pov">Told from the jungle side · the monkey who stayed</p>
+      </div>
+    </div>
+    <div class="opt-body">
+      <p>
+        We never follow the boy. We stay with <strong>the one monkey who didn't jump.</strong> He
+        watches his friend and his family vanish through a door, and then he waits beside it.
+        He brings fruit and sets it down. He sleeps against the frame. Rain comes. The door
+        dims. Everything happening in the city reaches us <strong>only as what's visible through
+        the doorway</strong> — a rectangle of another world, glimpsed and misunderstood.
+      </p>
+      <p>
+        <strong>The cost:</strong> the door is closing and he could step through and be with them.
+        He doesn't. He stays on the side where <em>home</em> is, so there is still a home to come
+        back to. When they finally spill back through, he is the reason the door was still open.
+      </p>
+
+      <h5 class="lbl">The shape</h5>
+      <div class="dia"><pre>
+   they go ──►│         │◄── he stays
+              │ THE DOOR │
+   the city is only ever what fits in this rectangle
+              │         │
+   day ─ night ─ rain ─ dimming ─ almost gone ─ they come back
+      </pre></div>
+
+      <h5 class="lbl">Who fights for it</h5>
+      <div class="jury">
+        <div class="jbox"><span class="who">Catmull</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i></div><p class="note">Luxo Jr. exactly — a non-human with a want, wordless, and it changes him.</p></div>
+        <div class="jbox"><span class="who">Papamichael</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i></div><p class="note">One location used honestly, one light source, held faces. His stated ideal.</p></div>
+        <div class="jbox"><span class="who">Anderson</span><div class="pips"><i class="pip on"></i><i class="pip"></i><i class="pip"></i></div><p class="note">A mood piece with no engine. Nothing hunts anyone.</p></div>
+      </div>
+
+      <h5 class="lbl">The trade</h5>
+      <div class="wr">
+        <div class="w"><h6>Wins</h6><ul>
+          <li><b>By far the smallest build on the slate</b> — one location, one character, the city as a handful of controlled plates inside a frame you own</li>
+          <li>Consistency stops being the enemy: almost nothing can drift</li>
+          <li>The most emotionally direct film of the three</li>
+          <li>Finishable with a week to spare, which nothing else here is</li>
+        </ul></div>
+        <div class="r"><h6>Risks</h6><ul>
+          <li>Throws away the chase, the reveal, and Anderson — our only committed advocate</li>
+          <li>Collides with <b>KEEPER</b> and <b>QUIET</b>, which already own the Catmull and Papamichael lanes</li>
+          <li>"Beautiful but small" is a real failure mode in a field of spectacle</li>
+          <li>Needs the single best sound design of the three to survive</li>
+        </ul></div>
+      </div>
+      <p style="margin-top:20px"><span class="build sm">Build size · small</span></p>
+    </div>
+  </article>
+</section>
+
+<!-- ============ OPTION B ============ -->
+<section>
+  <article class="opt">
+    <div class="opt-head">
+      <div class="opt-letter">B</div>
+      <div class="opt-t">
+        <h4>THE CLOSING DOOR</h4>
+        <p class="pov">Told from the boy's side · Dan's structure, disciplined</p>
+      </div>
+    </div>
+    <div class="opt-body">
+      <p>
+        The straight-ahead version, and the closest to what's already written. Boy's point of view,
+        linear. He convinces the hesitant monkey to jump. City. <strong>No door on this side</strong>
+        — stranded. The escalation ladder runs: phones out, then shopkeepers, then animal control.
+        The hesitant one is <strong>taken</strong>, and he watches the truck drive away. The door is
+        dimming. He chooses to go after the truck anyway.
+      </p>
+      <p>
+        <strong>The reveal still lands where it always did:</strong> while he was chasing, the others
+        were building. He gave up his way home for a friend, and his friends had been making him a
+        new one the whole time. <strong>No crystal, no MacGuffin</strong> — the pieces are the point.
+      </p>
+
+      <h5 class="lbl">The shape</h5>
+      <div class="dia"><pre>
+  convince him ─► door ─► ocean ─► stranded ─► phones ─► shops ─► animal control
+  to jump                                                              │
+                                                            the hesitant one is TAKEN
+                                                                       │
+                          door dimming ◄── clock ──► he goes after the truck anyway
+                                                                       │
+                        meanwhile, the others have been building ───────┘
+      </pre></div>
+
+      <h5 class="lbl">Who fights for it</h5>
+      <div class="jury">
+        <div class="jbox"><span class="who">Catmull</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip"></i></div><p class="note">Now has a real cost and a real choice. Still a boy who mostly reacts.</p></div>
+        <div class="jbox"><span class="who">Papamichael</span><div class="pips"><i class="pip on"></i><i class="pip"></i><i class="pip"></i></div><p class="note">Most locations, most crowds, most water. The most places geometry can break.</p></div>
+        <div class="jbox"><span class="who">Anderson</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i></div><p class="note">Threshold, descent, clock, pursuit. His grammar top to bottom.</p></div>
+      </div>
+
+      <h5 class="lbl">The trade</h5>
+      <div class="wr">
+        <div class="w"><h6>Wins</h6><ul>
+          <li>Keeps everything the team already loves, plus a working engine</li>
+          <li>The clearest Anderson play on the whole slate</li>
+          <li>Most legible to a general audience — best shot at <b>Audience Choice ($100K)</b></li>
+          <li>Least new writing: the beats are already agreed</li>
+        </ul></div>
+        <div class="r"><h6>Risks</h6><ul>
+          <li><b>The biggest build on the slate</b> — jungle, ocean, underwater, shore, streets, market, truck, build site, in 22 days</li>
+          <li>Vehicles and crowds are where AI video breaks first</li>
+          <li>The boy is still reactive for most of act two</li>
+          <li>Goes head-to-head with <b>BREACH</b> for the Anderson lane</li>
+        </ul></div>
+      </div>
+      <p style="margin-top:20px"><span class="build lg">Build size · large</span></p>
+    </div>
+  </article>
+</section>
+
+<!-- ============ OPTION C ============ -->
+<section>
+  <article class="opt">
+    <div class="opt-head">
+      <div class="opt-letter">C</div>
+      <div class="opt-t">
+        <h4>THE BUILD</h4>
+        <p class="pov">Told from the monkeys' side · a heist</p>
+      </div>
+    </div>
+    <div class="opt-body">
+      <p>
+        Flip the protagonist. <strong>The monkeys are the leads and the boy is what they're saving.</strong>
+        They follow him through, they see him stranded and frightened in a world he can't read —
+        and they <em>decide</em>. They case the city. They pick targets. They steal specific things.
+        They build.
+      </p>
+      <p>
+        <strong>The reveal becomes the premise, and that is an upgrade.</strong> We know from minute
+        one what they're doing. <strong>The boy doesn't.</strong> So we watch him think his friends
+        have abandoned him for shiny objects, watch him be ashamed of them, maybe try to stop them —
+        while we can see they are building him a way home. That's not a twist you wait for; it's
+        <b>dramatic irony</b>, and it plays for three straight minutes instead of thirty seconds.
+      </p>
+      <p>
+        <strong>The cost:</strong> the last piece is out of reach, and the hesitant one — the one who
+        was scared of the water, who almost didn't come — goes for it and is taken. The door opens
+        without him. The boy, who spent the whole film misreading them, is the one who turns around
+        and goes back.
+      </p>
+
+      <h5 class="lbl">The shape</h5>
+      <div class="dia"><pre>
+  WE know          ┌── case it ──► steal ──► build ──► one piece short
+  what they're     │                                        │
+  doing  ─────────►│                              the hesitant one goes
+                   │                                        │
+  HE doesn't ─────►└── "they've abandoned me" ──► shame ──► TAKEN
+                                                            │
+                            the door opens ──► he turns around and goes back
+      </pre></div>
+
+      <h5 class="lbl">Who fights for it</h5>
+      <div class="jury">
+        <div class="jbox"><span class="who">Catmull</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i></div><p class="note">Non-human characters with a want, a plan and a sacrifice. He invented this in 1986.</p></div>
+        <div class="jbox"><span class="who">Papamichael</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip"></i></div><p class="note">A heist demands readable space by design — so the geography has to hold, and he'll see that it does.</p></div>
+        <div class="jbox"><span class="who">Anderson</span><div class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i></div><p class="note">Physical objective, time pressure, thresholds, a plan you can follow. Native grammar.</p></div>
+      </div>
+
+      <h5 class="lbl">The trade</h5>
+      <div class="wr">
+        <div class="w"><h6>Wins</h6><ul>
+          <li><b>The only option all three judges would argue for</b></li>
+          <li>A heist <em>self-limits the build</em> — you pick 3–4 target locations because the plan needs them, not because the montage wants them</li>
+          <li>Wordless is native: heists are pure visual logic</li>
+          <li>Gives each of the three monkeys a job, so they become characters instead of copies</li>
+          <li>Dramatic irony beats a late twist, and costs nothing to shoot</li>
+        </ul></div>
+        <div class="r"><h6>Risks</h6><ul>
+          <li>The most new writing — a heist needs a <em>plan</em> the audience can follow, and that's real script work</li>
+          <li>Loses the surprise of the reveal (traded for three minutes of irony — worth it, but it is a trade)</li>
+          <li>The boy must stay sympathetic while misjudging his friends</li>
+          <li>Still shares the Anderson lane with <b>BREACH</b></li>
+        </ul></div>
+      </div>
+      <p style="margin-top:20px"><span class="build md">Build size · medium</span></p>
+    </div>
+  </article>
+</section>
+
+<!-- ============ RULES ============ -->
+<section id="rules">
+  <h2 class="sec">Against the nine gates</h2>
+  <h3 class="big">The rules separate these three more than the craft does</h3>
+  <p class="lede">
+    Stage 1 is pure eligibility — no judge sees the film until it clears every gate. Graded honestly,
+    one of these three is fragile in a way that has nothing to do with whether it's a good story.
+  </p>
+
+  <div class="alert" style="background:var(--hot-soft);border:1px solid var(--hot);border-radius:4px;padding:20px 22px;margin:0 0 30px">
+    <span style="display:inline-block;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--hot);border:1px solid var(--hot);padding:5px 8px;border-radius:3px;margin-bottom:12px">Gate 07 · still unanswered</span>
+    <h4 style="margin:0 0 10px;font-size:19px">Every one of these has a boy in it, and nobody has read the clause yet</h4>
+    <p style="margin:0 0 10px;font-size:15.5px;color:var(--text)">
+      Gate 07 lists <i>"no sexual content, no character depicted under 18."</i> Almost certainly an
+      anti-sexualisation rule. But <b>it is still unread</b>, and I am not going to recommend a
+      setup that bets three weeks on the charitable interpretation without saying so.
+    </p>
+    <p style="margin:0;font-size:15.5px;color:var(--text)">
+      <b>So the real test is: which option survives if the clause turns out to be literal?</b>
+      That question separates them cleanly — and it is the strongest argument in the recommendation.
+    </p>
+  </div>
+
+  <div class="tscroll">
+  <table>
+    <thead>
+      <tr><th>Gate</th><th>A · The Waiting One</th><th>B · The Closing Door</th><th>C · The Build</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>07 · character under 18</b><br><span style="color:var(--faint);font-size:13px">if read literally</span></td>
+        <td style="color:var(--good)"><b>SURVIVES.</b> Lead is already a monkey. The boy is a figure glimpsed through a doorway — recast, age up, or cut him entirely and it still works.</td>
+        <td style="color:var(--hot)"><b>BREAKS.</b> The lead <em>is</em> the boy. Ageing him up guts the childlike wonder the whole concept trades on.</td>
+        <td style="color:var(--good)"><b>SURVIVES.</b> Leads are monkeys. The boy becomes a young adult — a field researcher, an older brother — and not one structural beat changes.</td>
+      </tr>
+      <tr>
+        <td><b>07 · third-party IP</b></td>
+        <td>Low exposure — one character, one location.</td>
+        <td>Watch the monkey designs. They must not read as Abu, Curious George or Rafiki.</td>
+        <td>Same design risk, ×3 named characters. <b>Lock silhouettes against a no-go reference sheet before generating.</b></td>
+      </tr>
+      <tr>
+        <td><b>07 · no politics</b></td>
+        <td>None.</td>
+        <td style="color:var(--warn)"><b>Use animal control, not police.</b> Dan's ladder offers both — uniformed police as antagonists is an avoidable brush with the politics clause. Animal control is the safer and better choice anyway.</td>
+        <td style="color:var(--warn)">Same — the captors should be animal control.</td>
+      </tr>
+      <tr>
+        <td><b>01 · ≥3:00 runtime</b></td>
+        <td style="color:var(--warn)">Easy to hit, <b>hard to fill.</b> 3:20 on one waiting character needs real event, not just duration.</td>
+        <td>No trouble filling it. The risk is the opposite — overrunning.</td>
+        <td style="color:var(--warn)"><b>Tight.</b> Setup + a followable plan + the cost + the ending, wordless, in 3:20. Cap the plan at <b>three or four targets</b>, not an elaborate caper.</td>
+      </tr>
+      <tr>
+        <td><b>02 / 03 · on-platform, from scratch, in-window</b></td>
+        <td>Cheapest to satisfy — but the "city through the doorway" plates are still generations, on-platform, inside the window. Nothing is free.</td>
+        <td style="color:var(--hot)">Hardest. Crowds, water and a vehicle are the most generation-hungry things on the list, and every one must be made inside the window.</td>
+        <td>Self-limiting: the plan picks the locations, so the generation count is bounded by the script rather than by the montage.</td>
+      </tr>
+      <tr>
+        <td><b>04 · asset audit</b></td>
+        <td colspan="3" style="text-align:center">Identical for all three — build inside the submission project from day one and <b>never clean it up</b>. The audit reads the project's own generation history.</td>
+      </tr>
+      <tr>
+        <td><b>05 / 06 / 08 / 09</b><br><span style="color:var(--faint);font-size:13px">watermark · social post · subs · rosters</span></td>
+        <td colspan="3" style="text-align:center">Concept-independent — but <b>gate 06 is the most common kill at this festival.</b> Assign the public post to a named person now, whichever option wins.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============ COMPARE ============ -->
+<section>
+  <h2 class="sec">Side by side</h2>
+  <h3 class="big">The trade, in one table</h3>
+  <div class="tscroll">
+  <table>
+    <thead>
+      <tr><th></th><th>A · The Waiting One</th><th>B · The Closing Door</th><th>C · The Build</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Protagonist</b></td><td>The monkey who stayed</td><td>The boy</td><td>The three monkeys</td></tr>
+      <tr><td><b>Engine</b></td><td>Waiting, and a closing door</td><td>Pursuit against a clock</td><td>A plan, executed</td></tr>
+      <tr><td><b>Locations</b></td><td>1 (+ a framed window)</td><td>7+</td><td>3–4, chosen by the plan</td></tr>
+      <tr><td><b>Who pays</b></td><td>He gives up going with them</td><td>He gives up the door</td><td>The hesitant one is taken</td></tr>
+      <tr><td><b>The reveal</b></td><td>Cut — he never sees the build</td><td>Kept, as a late twist</td><td>Becomes the premise → irony</td></tr>
+      <tr><td><b>Jury (EC / PP / PA)</b></td><td>3 / 3 / 1</td><td>2 / 1 / 3</td><td><b>3 / 2 / 3</b></td></tr>
+      <tr><td><b>Survives gate 07 read literally</b></td><td style="color:var(--good)"><b>Yes</b></td><td style="color:var(--hot)"><b>No</b></td><td style="color:var(--good)"><b>Yes</b></td></tr>
+      <tr><td><b>Finishable by Sep 3</b></td><td>Comfortably</td><td>Only if scope is cut hard</td><td>Yes, if the plan is locked this week</td></tr>
+      <tr class="rec-row"><td><b>Verdict</b></td><td>Safest. Smallest. Competes with our own slate.</td><td>Most familiar. Most days-risk, and the only one a literal gate 07 kills.</td><td><b>Recommended</b> — highest ceiling, buildable, rules-robust</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============ REC ============ -->
+<section>
+  <div class="rec">
+    <span class="tag">Recommendation</span>
+    <h4>Option C — and steal Option A's best shot for the cutaway</h4>
+    <p>
+      C is the only one of the three where <strong>every juror has something to fight for</strong>,
+      and it is the only one where the production discipline comes from the story itself: a heist
+      can't sprawl, because the audience has to be able to follow the plan. That constraint is
+      doing for free what we'd otherwise have to impose by hand.
+    </p>
+    <p>
+      It also fixes the deepest problem in the original — <strong>the passive protagonist</strong> —
+      not by giving the boy more to do, but by admitting who the story was always about. The monkeys
+      had the want, the plan and the agency from the first draft. This just stops pretending otherwise.
+    </p>
+    <p>
+      <strong>Then take the one image from A that's too good to lose:</strong> the monkey on the
+      jungle side, sitting by the door, setting down fruit, sleeping against the frame. Three or four
+      cutaways, one location, one character — the cheapest generations in the film, and they give it
+      its whole emotional floor while the heist runs. That's Dan's beat sheet earning its keep.
+    </p>
+    <p>
+      <strong>And the rules agree with the craft here, which is rare.</strong> C is one of the two
+      options that survives gate 07 read literally — the leads are monkeys, so if the clause turns
+      out to bar a child on screen, the boy becomes a young adult and <em>not one beat changes</em>.
+      B is the option that dies to that reading, and it is also the option most likely to run out of
+      days. Picking C means we are not betting three weeks on a clause nobody has read yet.
+    </p>
+  </div>
+
+  <h5 class="lbl">If we pick C, the next three decisions</h5>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Decision</th><th>Recommended</th><th>By when</th></tr></thead>
+    <tbody>
+      <tr><td>The three monkeys — name, silhouette, job in the plan</td><td>Leader / thief / the hesitant one. Locked refs, one blessed image each.</td><td><b>Aug 14</b></td></tr>
+      <tr><td>The plan itself — what four things do they steal, and why each</td><td>Write it as a heist beat sheet before any shot list. The audience must be able to follow it.</td><td><b>Aug 15</b></td></tr>
+      <tr><td>The four locations, and the landmark visible from all of them</td><td>Generate the master shot first; cut everything against it.</td><td><b>Aug 16</b></td></tr>
+      <tr><td><b>Gate 07 — the verbatim clause</b></td><td>Somebody pastes the actual rules text in <span class="mono">#team-3</span>. If it bars a child on screen, the boy becomes a young adult and we lose nothing.</td><td style="color:var(--hot)"><b>Before any character generation</b></td></tr>
+      <tr><td>A no-go reference sheet for the monkey designs</td><td>Explicitly off-model from Abu, Curious George and Rafiki — gate 07 bars third-party IP, and "it just looks like that" is not a defence.</td><td><b>Aug 14</b>, with the refs</td></tr>
+      <tr><td>Who the captors are</td><td><b>Animal control, not police.</b> Avoids the no-politics clause entirely, and a net beats a uniform dramatically anyway.</td><td>Now — it's a script decision</td></tr>
+      <tr><td>Who owns the public social post</td><td>A named person, a public account, viewable logged-out, live through the festival. Higgsfield names this the single most common reason a strong entry is ruled non-eligible.</td><td>Now</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <p>
+    <b>Sources.</b> Judge reads, the nine eligibility gates, the four criteria and the festival
+    clock are from the <a href="./" style="color:var(--pink)">war room</a>. The full grade on the
+    original concept is in <a href="./pink-door.html" style="color:var(--pink)">the concept review</a>.
+    Story beats adopted from Dan Ramm's notes in <span class="mono">#team-3</span>, 2026-08-12.
+  </p>
+  <p>
+    <b>Nothing here is a veto.</b> The room advises; the director decides.
+    <i>The film, not the filmmaker, is under the microscope.</i>
+  </p>
+</footer>
+
+</div>
