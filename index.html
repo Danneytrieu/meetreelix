@@ -265,6 +265,13 @@ input,select{font:inherit;color:inherit}
   display:block;font-family:var(--rs-mono);font-size:9px;color:var(--faint);
   letter-spacing:.09em;text-transform:uppercase;
 }
+/* Today. Deliberately not volt — that hue means "everyone is free" and nothing
+   else may borrow it, or the one colour worth hunting for stops being rare. */
+.g-day.is-today{background:var(--panel2);box-shadow:inset 0 -2px 0 var(--ink)}
+.g-day.is-today:hover{background:#242819}
+.g-day.is-today .dow,
+.g-day.is-today .mon{color:var(--ink)}
+.g-day.is-today .mon{font-weight:700;letter-spacing:.13em}
 .g-time{
   position:sticky;left:0;z-index:2;background:var(--panel);
   border-right:1px solid var(--line2);
@@ -1368,6 +1375,13 @@ const cellIndex = (d,s) => d*slotCount()+s;
 
 /* which zone the grid is currently READ in */
 function activeTz(){ return tzMode==="event" ? ev.tz : localTz(); }
+/* Today's date key in whichever zone the columns are currently drawn in. Asking
+   the reader's own clock would light the wrong column for anyone reading the
+   grid in the event's zone from somewhere else. */
+function todayKey(){
+  const w=utcToWall(Date.now(),activeTz());
+  return w.y+"-"+String(w.mo).padStart(2,"0")+"-"+String(w.d).padStart(2,"0");
+}
 function tzDiffers(){ return ev.tz !== localTz(); }
 
 /* absolute instant of a slot, from the event's anchor zone */
@@ -1852,10 +1866,13 @@ function renderGrid(){
   const pk = pickValid(ev.pick) ? ev.pick : null;
 
   let html = '<div class="gcell g-corner"></div>';
+  const tKey=todayKey();
   v.cols.forEach(function(c,ci){
-    html += '<div class="gcell g-day" data-col="'+ci+'" role="button" tabindex="-1" title="Fill this whole day">'+
+    const isToday=c.key===tKey;
+    html += '<div class="gcell g-day'+(isToday?" is-today":"")+'" data-col="'+ci+'" role="button" tabindex="-1" '+
+      'title="'+(isToday?"Today — fill this whole day":"Fill this whole day")+'">'+
       '<span class="dow">'+DOW[c.dow]+'</span><span class="dnum">'+c.d+'</span>'+
-      '<span class="mon">'+MON[c.mo-1]+'</span></div>';
+      '<span class="mon">'+(isToday?"TODAY":MON[c.mo-1])+'</span></div>';
   });
 
   v.rows.forEach(function(min){
@@ -2174,23 +2191,25 @@ const JUDGES = [
 
 const GATES = [
   {n:"01", cls:"hot",  t:"Runtime under 3:00",
-   s:"A hard floor, not a guideline. 2:59 is not screened. Lock a 3:20 minimum target so a trim in the edit can't kill you."},
+   s:"A hard floor, not a guideline. 2:59 is not screened. Official guidance is <b>3 minutes minimum, 3\u20135 recommended</b> \u2014 lock a 3:20 target so a trim in the edit can't kill you."},
   {n:"02", cls:"hot",  t:"Any video or image generated off-platform",
-   s:"All visual generation must happen on higgsfield.ai. Any model on the platform counts; nothing off it does. Audio is fully exempt — music, VO, lipsync and sound design can be made anywhere."},
+   s:"All AI video and image generation happens inside your dedicated <b>Cinema Studio festival project</b> on higgsfield.ai. Any model on the platform counts; nothing off it does. <b>Non-AI tools are explicitly welcome</b> \u2014 the rules name Blender, After Effects and DaVinci Resolve for editing, compositing and 3D."},
   {n:"03", cls:"hot",  t:"Reusing assets you already had",
-   s:"Everything visual must be generated from scratch inside the window — Aug 10 to Sep 3. Your own earlier Higgsfield projects are off-limits. Official Higgsfield open-source packs (HellGrind, Zephyr, Academy drops) are exempt."},
+   s:"Every new generation must happen inside the window \u2014 <b>Aug 10 to Sep 3</b>. But your own prior work is <b>fine as a reference</b>: \u201cpreviously generated inputs can still be reused as references.\u201d Off-limits as a generation, allowed as an input. Official open-source packs (HellGrind, Zephyr, Mork) are exempt."},
   {n:"04", cls:"hot",  t:"Assets missing from the submission project",
-   s:"The audit compares your final cut against the project's own generation history. \"If a project does not retain enough of its underlying assets to support that check, Higgsfield may mark the Entry non-eligible.\" Never clean up a project."},
+   s:"The audit compares your final cut against the project's own generation history. \u201cIf a project does not retain enough of its underlying assets to support that check, Higgsfield may mark the Entry non-eligible.\u201d Never clean up a project."},
   {n:"05", cls:"warn", t:"Missing watermark or packshot",
    s:"Both live inside your submission project. They must be on the final video AND on the version you post publicly."},
-  {n:"06", cls:"warn", t:"The social post — the most common kill",
-   s:"A public post on Instagram, YouTube, X or Reddit, from a public account, viewable logged-out, live through the end of the festival. Higgsfield names this as the single most common reason a strong entry is ruled non-eligible."},
-  {n:"07", cls:"warn", t:"Prohibited content",
-   s:"No third-party IP, no real person's likeness or cloned voice without written consent, no politics, no religion, no sexual content, no character depicted under 18. Enforceable after payout — the prize can be clawed back."},
-  {n:"08", cls:"warn", t:"Lapsed subscription",
-   s:"Every member of every team needs an active Higgsfield subscription both when the submission project is created and at the moment of submission. Budget this across all teams now."},
-  {n:"09", cls:"hot",  t:"One person on two rosters",
-   s:"\"A participant or team may receive only one Festival prize in total across all their Entries.\" Each team member is a participant. Anyone appearing on two rosters caps both entries at a single prize between them — leader or not."}
+  {n:"06", cls:"warn", t:"The social post \u2014 the most common kill",
+   s:"A public post on Instagram, YouTube, X or Reddit, from a public account, <b>viewable without logging in</b>, live through the end of the festival. \u201cAn account that's private or locked disqualifies an otherwise strong entry.\u201d"},
+  {n:"07", cls:"warn", t:"Prohibited content \u2014 and the child clause, answered",
+   s:"<b>A child protagonist is PERMITTED.</b> Verbatim: fictional AI characters who appear to be children are allowed only if <b>(i)</b> entirely fictional, resembling no identifiable real child; <b>(ii)</b> never in a sexualized, romantic, suggestive, exploitative or harmful context; <b>(iii)</b> <b>not a victim or perpetrator of graphic violence, self-harm or abuse</b>; <b>(iv)</b> lawful in your jurisdiction and the US. \u26a0\ufe0f <b>(iii) binds any chase or capture story</b> \u2014 peril is fine, graphic violence involving the child is not. Also: no third-party IP, and <b>no real faces or voices at all</b> \u2014 \u201cconsent does not override this rule\u201d, including your own, your team's, family, public and historical figures."},
+  {n:"08", cls:"warn", t:"Account not in good standing",
+   s:"<b>Corrected 2026-08-12 \u2014 a PAID SUBSCRIPTION IS NOT REQUIRED.</b> \u201cAny registered Higgsfield user in good standing can enter and win, no paid subscription needed to submit.\u201d What you do need is a registered account in good standing <b>both when the project is created and at submission</b>, and every participant must be <b>18 or older</b>."},
+  {n:"09", cls:"hot",  t:"Team over 4, or one person on two rosters",
+   s:"<b>Teams are capped at FOUR people and composition is LOCKED at submission.</b> Separately: \u201ca participant or team may receive only one Festival prize in total across all their Entries\u201d \u2014 anyone on two rosters caps both entries at a single prize between them, leader or not. The Team Leader owns the project and is the payee."},
+  {n:"10", cls:"hot",  t:"Audio that isn't AI-generated",
+   s:"<b>New 2026-08-12.</b> \u201cAll audio must be AI-generated.\u201d Audio is exempt from the <i>on-platform</i> and <i>timing</i> rules \u2014 make it with any AI tool, any time \u2014 but <b>no human voiceover, no licensed music, no recorded foley.</b> Every file still has to be uploaded into the submission project."}
 ];
 
 const SLATE = [
@@ -2328,8 +2347,8 @@ function warRules(){
     '<div class="gate '+g.cls+'"><span class="gate-n">'+g.n+'</span>'+
     '<span class="gate-t"><b>'+esc(g.t)+'</b><span>'+g.s+'</span></span></div>').join("");
 
-  return '<div class="war"><p class="war-kicker">What kills you</p><h2>Nine ways to lose before anyone watches your film</h2>'+
-    '<p class="lede">Stage 1 is pure eligibility. No judge sees your work until it clears every one of these. Read this before you plan, not before you submit.</p>'+
+  return '<div class="war"><p class="war-kicker">What kills you</p><h2>Ten ways to lose before anyone watches your film</h2>'+
+    '<p class="lede">Stage 1 is pure eligibility. No judge sees your work until it clears every one of these. Read this before you plan, not before you submit.</p>'+'<p class="lede" style="color:var(--hot)"><b>Re-read from the Official Rules on 2026-08-12 \u2014 six of these were wrong.</b> The child clause is answered (a child lead is <b>permitted</b>), <b>no paid subscription is required</b>, teams are capped at <b>four</b>, <b>all audio must be AI-generated</b>, non-AI editing tools are welcome, and consent does <i>not</i> license a real face or voice.</p>'+
     gates+
     '<hr class="war-rule">'+
     '<h3>⚠ The blocking pre-flight — Aug 10, before a single credit</h3>'+
@@ -2535,8 +2554,8 @@ function warSide(mode){
     '<div class="sidefact"><b>3:00</b><span>Minimum runtime. Hard floor.</span></div>'+
     '<div class="sidefact"><b>16:9 or 21:9</b><span>MP4 or MOV, up to 4K.</span></div>'+
     '<div class="sidefact"><b>Unlimited</b><span>Entries per team — one prize each, max.</span></div>'+
-    '<div class="sidefact"><b>24 months</b><span>Keep every licence and consent form.</span></div>'+
-    '<h6>Exempt from the platform rule</h6><p class="rs-faint" style="font-size:11.5px;line-height:1.55">All audio. Music, voice, lipsync and sound design can be made anywhere — but every file must be uploaded into the submission project.</p></div>';
+    '<div class="sidefact"><b>4 people</b><span>Team cap. Locked at submission.</span></div>'+'<div class="sidefact"><b>No sub needed</b><span>A registered account in good standing is enough.</span></div>'+
+    '<h6>Audio — read this twice</h6><p class="rs-faint" style="font-size:11.5px;line-height:1.55">Exempt from the <i>platform</i> and <i>timing</i> rules — make it with any AI tool, any time. <b>But it must still be AI-generated:</b> no human VO, no licensed music, no recorded foley.</p></div>';
 
   if(mode==="slate") return '<div class="war-side"><h6>The slate</h6><ul class="toclist">'+
     SLATE.map(c=>'<li><a data-jump="#c-'+c.key+'">'+c.no+' · '+esc(c.title)+'</a></li>').join("")+'</ul>'+

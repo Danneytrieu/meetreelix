@@ -1,0 +1,318 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>#team-3 — checkpoint 01</title>
+<style>
+:root{
+  --bg:#faf7f2;--surface:#fff;--surface-2:#f3eee6;--text:#1c1a17;--dim:#5c554b;
+  --faint:#8a8175;--border:#e0d8cb;--rule:#cfc5b4;
+  --pink:#d6467f;--pink-soft:#fbe7ef;--good:#2f7d59;--good-soft:#e4f2ea;
+  --warn:#b06a12;--warn-soft:#fbeedb;--hot:#c0392b;--hot-soft:#fbe6e3;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#14120f;--surface:#1c1917;--surface-2:#231f1b;--text:#f0ebe3;--dim:#b3a99a;
+  --faint:#8b8172;--border:#332d26;--rule:#3d362d;
+  --pink:#ff7aae;--pink-soft:#33141f;--good:#5fc292;--good-soft:#14261d;
+  --warn:#e0a24c;--warn-soft:#2b2013;--hot:#ef7a6a;--hot-soft:#2c1714;}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.65 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;padding:0 20px 90px}
+.wrap{max-width:900px;margin:0 auto}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+#age{display:none;background:var(--warn-soft);border:1px solid var(--warn);color:var(--warn);
+  border-radius:4px;padding:12px 16px;margin:22px 0 0;
+  font:600 13px/1.5 ui-monospace,Menlo,monospace}
+header.mast{padding:54px 0 26px;border-bottom:3px double var(--rule);margin-bottom:36px}
+.kicker{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--pink);margin:0 0 16px}
+h1{font-size:clamp(30px,6vw,50px);line-height:1.04;margin:0 0 14px;letter-spacing:-.02em;font-weight:600}
+h1 em{color:var(--pink);font-style:normal}
+.standfirst{font-size:18px;line-height:1.55;color:var(--dim);margin:0 0 20px;max-width:64ch}
+.byline{font:500 12px/1.6 ui-monospace,Menlo,monospace;color:var(--faint);display:flex;flex-wrap:wrap;gap:8px 18px;padding-top:16px;border-top:1px solid var(--border)}
+.byline b{color:var(--text);font-weight:600}
+section{margin:0 0 50px}
+h2.sec{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:0 0 8px}
+h3.big{font-size:clamp(22px,4.2vw,30px);line-height:1.15;margin:0 0 14px;letter-spacing:-.015em;font-weight:600}
+.lede{font-size:17px;color:var(--dim);margin:0 0 26px;max-width:66ch}
+p{max-width:70ch}
+.headline{background:var(--surface);border:1px solid var(--border);border-left:5px solid var(--hot);border-radius:4px;padding:24px 26px;margin:0 0 44px}
+.headline h2{margin:0 0 12px;font-size:22px}
+.headline p{margin:0 0 12px;color:var(--dim);font-size:16px}
+.headline p:last-child{margin:0}
+.headline strong{color:var(--text)}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:4px;margin:0 0 14px}
+table{border-collapse:collapse;width:100%;min-width:640px;background:var(--surface);font-size:14.5px}
+th,td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:600 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);background:var(--surface-2);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+.who{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px 22px;margin-bottom:14px}
+.who h4{margin:0 0 3px;font-size:18px}
+.who .role{margin:0 0 12px;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--pink)}
+.who p{margin:0 0 10px;font-size:15px;color:var(--dim)}
+.who p:last-child{margin:0}
+.who .said{border-left:2px solid var(--border);padding-left:14px;font-style:italic;color:var(--faint);font-size:14.5px}
+.dia{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:18px;overflow-x:auto;margin:0 0 6px}
+.dia pre{margin:0;font:12px/1.6 ui-monospace,"SF Mono",Menlo,Consolas,monospace;white-space:pre;color:var(--text)}
+.cap{font-size:13.5px;color:var(--faint);margin:0 0 30px;font-style:italic}
+.finding{background:var(--pink-soft);border:1px solid var(--pink);border-radius:4px;padding:22px 26px;margin:0 0 26px}
+.finding .tag{display:inline-block;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--pink);padding:6px 9px;border-radius:3px;margin-bottom:13px}
+.finding h4{margin:0 0 11px;font-size:20px}
+.finding p{margin:0 0 11px;font-size:15.5px;color:var(--text)}
+.finding p:last-child{margin:0}
+.q{border-left:2px solid var(--border);padding-left:18px;margin-bottom:18px}
+.q.hot{border-left-color:var(--hot)}
+.q h5{margin:0 0 5px;font-size:16.5px;font-weight:600;line-height:1.4}
+.q p{margin:0;font-size:14.5px;color:var(--dim)}
+.q p b{color:var(--good);font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;margin-right:8px}
+.q.hot p b{color:var(--hot)}
+.pill{display:inline-block;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-radius:3px}
+.pill.g{background:var(--good-soft);color:var(--good)}
+.pill.w{background:var(--warn-soft);color:var(--warn)}
+.pill.h{background:var(--hot-soft);color:var(--hot)}
+footer{border-top:3px double var(--rule);margin-top:52px;padding-top:20px;font-size:13.5px;color:var(--faint)}
+footer p{margin:0 0 8px;max-width:70ch}
+footer a{color:var(--pink)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="kicker">Checkpoint 01 · #team-3 · Higgsfield Global Film Festival</p>
+  <h1>Where <em>#team-3</em> actually stands</h1>
+  <p class="standfirst">
+    Everything said in the channel from Aug 8 to Aug 12, read in one pass: the concepts on the
+    table, who wants what, where you disagree without having noticed, and what the rules say
+    about each. Nothing here is a decision — it is the room, written down.
+  </p>
+  <p class="byline">
+    <span><b>Covers</b> Aug 8 → Aug 12 · 115 messages</span>
+    <span><b>Voices</b> Hannahh · Dan Ramm · Chillucci · DanneyTee · Laimenai</span>
+    <span><b>Deadline</b> Sep 3, 11:59pm PT</span>
+  </p>
+  <div id="age"></div>
+</header>
+
+<div class="headline">
+  <h2>The headline: there are three concepts, and the vote never happened</h2>
+  <p>
+    <strong>Danney called it for "tomorrow" on Aug 12 at 01:33</strong> — <i>"If not we can take a
+    vote tomorrow. And start with the most consensus."</i> Tomorrow is today. The Room tab on
+    meetReelix was posted for exactly this and <strong>nobody has voted in it.</strong>
+  </p>
+  <p>
+    Meanwhile three separate stories are live and none has been compared to the others:
+    <strong>The Last Day</strong> (Danney, from Chillucci's story), <strong>The Blind Mapmaker</strong>
+    (Chillucci), and <strong>The Pink Door</strong> (Hannah).
+  </p>
+  <p>
+    ⚠️ <strong>And a correction I owe the room.</strong> The concept review I posted yesterday graded
+    <em>only</em> Pink Door, in depth, against the jury and the gates. That was the question I was
+    handed — but posting it may have read as the team having chosen. <strong>It hasn't.</strong>
+    Two other concepts have had no equivalent read, and one of them is the most structurally complete
+    thing anyone has written.
+  </p>
+</div>
+
+<!-- ============ THE THREE ============ -->
+<section>
+  <h2 class="sec">01 · What's on the table</h2>
+  <h3 class="big">Three concepts, graded the same way</h3>
+  <p class="lede">
+    Jury ratings are how hard each juror would fight for it, 1–3 — the war room's own scale.
+    Rules column is against the corrected ten gates, re-read from the Official Rules today.
+  </p>
+
+  <div class="tscroll">
+  <table>
+    <thead><tr><th></th><th>THE LAST DAY</th><th>THE BLIND MAPMAKER</th><th>THE PINK DOOR</th></tr></thead>
+    <tbody>
+      <tr><td><b>Whose</b></td><td>Danney, from Chillucci's story</td><td>Chillucci</td><td>Hannahh</td></tr>
+      <tr><td><b>The hook</b></td><td>The last day on earth — dream worlds, each in a different art style, reached through doors</td><td>A blind mapmaker who draws places she's never seen from her son's letters, and walks out to find him when they stop</td><td>A boy and his monkeys fall through a pink door into a city; the monkeys steal the pieces to build a way home</td></tr>
+      <tr><td><b>State</b></td><td class="mono">Premise + visual hooks. No beats.</td><td class="mono">Fully worked. Conflict, climax and theme all answered.</td><td class="mono">Full arc + a reviewed rewrite path.</td></tr>
+      <tr><td><b>Jury</b> <span class="mono">EC/PP/PA</span></td><td>3 / 1 / 1</td><td><b>3 / 3 / 2</b></td><td>3 / 2 / 3 <span class="mono">(as Option C)</span></td></tr>
+      <tr><td><b>Build size</b></td><td><span class="pill h">Large</span> many worlds, many styles</td><td><span class="pill g">Small</span> one city, one character, touch-led</td><td><span class="pill w">Medium–large</span> depends on the setup chosen</td></tr>
+      <tr><td><b>Rules risk</b></td><td><span class="pill w">Watch</span> "different art styles" can read as pastiche of named films</td><td><span class="pill g">Clean</span> no child lead, no IP adjacency, no crowds needed</td><td><span class="pill w">Watch</span> Tarzan adjacency (gate 07, third-party IP) — flagged by Chillucci</td></tr>
+      <tr><td><b>Who has backed it</b></td><td>Laimenai, Chillucci</td><td>Dan, Hannah — <i>and both said they didn't want to riff on anything else</i></td><td>Danney, Chillucci, Dan (developed it heavily)</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============ THE PATTERN ============ -->
+<section>
+  <h2 class="sec">02 · The thing nobody in the channel has said out loud</h2>
+  <h3 class="big">You have written the same film three times</h3>
+
+  <div class="dia"><pre>
+  THE LAST DAY      a dying man crosses into a DREAM WORLD he has never seen
+  THE MAPMAKER      a blind woman crosses into a CITY she has never seen
+  THE PINK DOOR     a boy crosses through a DOOR into a WORLD he has never seen
+                                    │
+                    ────────────────┴────────────────
+                    someone crosses a threshold into
+                     a world they cannot see — and
+                      has to trust what's on the
+                              other side
+  </pre></div>
+  <p class="cap">In plain English: three different stories, one obsession. That's not a coincidence — it's the team's actual taste.</p>
+
+  <div class="finding">
+    <span class="tag">Finding</span>
+    <h4>The threshold is the team's real idea. The story around it is still open.</h4>
+    <p>
+      It shows up in the language too. On Aug 10, on <i>The Last Day</i>, Danney wrote
+      <i>"would be cool to have different doors lead to different world of art theme."</i>
+      Two days later Dan proposed the same structure on a completely different concept —
+      jungle, ocean and city each in their own art style. <strong>The idea migrated between
+      stories because it was never really about either story.</strong>
+    </p>
+    <p>
+      Which means the argument in this channel isn't <i>"which concept?"</i> It's
+      <strong>"which story best carries the thing we already agree on?"</strong> That is a much
+      easier question, and it's the one the vote should ask.
+    </p>
+  </div>
+</section>
+
+<!-- ============ THE ROOM ============ -->
+<section>
+  <h2 class="sec">03 · Who's in the room</h2>
+  <h3 class="big">What each of you keeps reaching for</h3>
+  <p class="lede">Built from what you've each actually said, not from roles. This is the part that carries to the next film.</p>
+
+  <div class="who">
+    <h4>Dan Ramm</h4>
+    <p class="role">The developer — interrogates, then builds</p>
+    <p>Has not pitched a concept of his own. Instead he takes someone else's and asks the structural question nobody asked: <i>what's the conflict, what's the resolution, why is she a mapmaker if she's blind.</i> Then he hands back beats. His Pink Door notes solved the ending problem better than the review did.</p>
+    <p><b>Reaches for:</b> wordless storytelling (<i>"HUGE craft points"</i>), escalating stakes, distinct visual worlds, and twisting the knife — his ladder of realizations is the strongest structural writing in the channel.</p>
+    <p class="said">References he brings: What Dreams May Come · Bioshock Infinite · Inception · Annihilation · The Last of Us · I Am Legend · Pluribus · The Leftovers · Oblivion</p>
+  </div>
+
+  <div class="who">
+    <h4>Chillucci</h4>
+    <p class="role">The architect — writes it whole or not at all</p>
+    <p>The only person who has answered every question about their own concept before being asked twice. The Mapmaker has a stated conflict, a stated climax, and — rarest of all — <strong>a climax that isn't the plot resolving</strong>: her fingers find the carved detail from the letter, and <i>that</i>, not finding her son, is the emotional peak.</p>
+    <p><b>Reaches for:</b> conceptual payoffs over plot payoffs, and internal consistency. Also the room's IP conscience — he's the one who spotted Tarzan.</p>
+  </div>
+
+  <div class="who">
+    <h4>Hannahh</h4>
+    <p class="role">The image-first pitcher</p>
+    <p>Thinks in pictures and pitches them whole: a pink door standing alone in a jungle, a boy surfacing in open ocean, monkeys on rooftops. Her animation work is what the others praised first — Dan called out the <i>"euphoric Spiderman vibe"</i> and the Ghibli-style vignettes.</p>
+    <p><b>Reaches for:</b> wonder, motion, and a strong single image. Her instinct produced the one thing on the slate nobody else has — a door onto open ocean.</p>
+  </div>
+
+  <div class="who">
+    <h4>DanneyTee</h4>
+    <p class="role">The connector — turns an idea into a production</p>
+    <p>Adds the hook that makes a concept <em>buildable</em>: the wife as a music orchestrator so AI music becomes part of the story rather than a layer on top; doors as a device for switching art worlds. Pushes hardest on process — meetings, the vote, the schedule.</p>
+    <p><b>Reaches for:</b> emotional range in one film (<i>"happiness — regret — sadness"</i>), and anything with a strong visual-effects ceiling.</p>
+  </div>
+
+  <div class="who">
+    <h4>Laimenai</h4>
+    <p class="role">Present, light touch</p>
+    <p>Backed <i>The Last Day</i> early. Hasn't weighed in since Aug 9 — worth a direct ask before the vote, because a silent teammate is not the same as a neutral one.</p>
+  </div>
+</section>
+
+<!-- ============ TENSIONS ============ -->
+<section>
+  <h2 class="sec">04 · Where you disagree without having noticed</h2>
+  <h3 class="big">Open, and worth settling today</h3>
+
+  <div class="q hot">
+    <h5>Dan and Hannah effectively endorsed the Mapmaker — in a voice call the others missed</h5>
+    <p><b>Surface it</b> Dan, Aug 12: <i>"Hannah and i talked but didn't want to riff really in anything apart from Chillucci's idea since it seems thorough and cool."</i> That's two of five leaning one way, said once, in passing, and never carried into the channel as a position. It should be on the ballot.</p>
+  </div>
+
+  <div class="q hot">
+    <h5>Two concepts want opposite production shapes</h5>
+    <p><b>Decide first</b> The Mapmaker is <em>small by design</em> — one city, one character, resolved by touch. The Last Day is <em>large by design</em> — many worlds, many art styles. Those aren't two flavours of the same plan; they're opposite bets on where 22 days should go.</p>
+  </div>
+
+  <div class="q">
+    <h5>"Different art styles per world" is unresolved craft, not a settled look</h5>
+    <p><b>Test it</b> It's the team's favourite idea and it has never been challenged. The risk is craft-on-display, which all three judges reject. The safer version — one style, worlds separated by palette and light — has not been argued against yet. Argue it.</p>
+  </div>
+
+  <div class="q">
+    <h5>Tarzan</h5>
+    <p><b>Design around it</b> Chillucci flagged it; Hannah hasn't seen the film. Not fatal — gate 07 bars third-party IP, not premises — but if Pink Door wins, the monkey and boy designs need an explicit off-model reference sheet before anything is generated.</p>
+  </div>
+</section>
+
+<!-- ============ RULES ============ -->
+<section>
+  <h2 class="sec">05 · Rules check</h2>
+  <h3 class="big">What changed under you this week</h3>
+  <p class="lede">Re-read from the Official Rules today. Six things the team may still believe are wrong.</p>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>You probably think</th><th>Actually</th><th>So what</th></tr></thead>
+    <tbody>
+      <tr><td>A child lead might disqualify us</td><td class="mono" style="color:var(--good)">PERMITTED</td><td>Pink Door's boy is fine. But he may not be shown as victim or perpetrator of graphic violence — that binds the chase.</td></tr>
+      <tr><td>Everyone needs a paid subscription</td><td class="mono" style="color:var(--good)">NOT REQUIRED</td><td>A registered account in good standing is enough. Don't spend that money.</td></tr>
+      <tr><td>Team size is open</td><td class="mono" style="color:var(--hot)">MAX 4, LOCKED</td><td>#team-3 currently has five names in it. <b>Settle who is on the roster before submission.</b></td></tr>
+      <tr><td>Audio can be made anywhere</td><td class="mono" style="color:var(--warn)">MUST BE AI-GENERATED</td><td>No human VO, no licensed music, no recorded foley. Makes "wordless" smarter, not just safer.</td></tr>
+      <tr><td>Everything must be made on Higgsfield</td><td class="mono" style="color:var(--good)">EDITING TOOLS OK</td><td>Blender, After Effects, DaVinci named in the rules. Hannah's animation skills are usable.</td></tr>
+      <tr><td>Real faces are fine with consent</td><td class="mono" style="color:var(--hot)">NEVER</td><td>"Consent does not override this rule" — including your own face or voice.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ============ MOVES ============ -->
+<section>
+  <h2 class="sec">06 · Suggested moves</h2>
+  <h3 class="big">Three things to look at — not decisions</h3>
+
+  <div class="q">
+    <h5>1. Vote today, and put all three on the ballot</h5>
+    <p><b>Why</b> It's already a day late, the Room tab exists for it, and two people have a stated lean that never made it into the channel. A vote taken now costs nothing; a concept chosen by drift costs three weeks.</p>
+  </div>
+  <div class="q">
+    <h5>2. Ask the easier question instead of "which concept?"</h5>
+    <p><b>Why</b> All three are the same idea — someone crossing into a world they can't see. Ask <b>"which story carries that best in three minutes, with 22 days?"</b> That question has a defensible answer; "which do you like?" doesn't.</p>
+  </div>
+  <div class="q">
+    <h5>3. Whatever wins, steal from the other two</h5>
+    <p><b>Why</b> The Mapmaker's climax structure — <em>proof of trust lands before the plot resolves</em> — is the strongest single beat anyone has written, and it is portable. Pink Door's door-onto-ocean is the strongest image. The Last Day's art-world doors are the strongest hook. None of those are locked to their concept.</p>
+  </div>
+</section>
+
+<!-- ============ CHANGED ============ -->
+<section>
+  <h2 class="sec">07 · What changed since last checkpoint</h2>
+  <h3 class="big">Baseline</h3>
+  <p>
+    First checkpoint for this channel — nothing to compare against yet. From the next one, this
+    section carries what moved: decisions taken, feedback absorbed, concepts dropped, and
+    anything that quietly went stale.
+  </p>
+</section>
+
+<footer>
+  <p>
+    <b>Read next.</b> <a href="../">The war room</a> — judges, the ten gates, the festival clock ·
+    <a href="../pink-door.html">Pink Door: the concept review</a> ·
+    <a href="../pink-door-options.html">Pink Door: three ways to build it</a>
+  </p>
+  <p>
+    <b>Nothing here is a veto.</b> A checkpoint reports the room; it does not run it.
+    Candid notes, no authority — the director decides.
+  </p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var made = new Date("2026-08-12T00:00:00-07:00");
+  var days = Math.floor((Date.now() - made.getTime()) / 864e5);
+  var el = document.getElementById("age");
+  if (days >= 7) {
+    el.style.display = "block";
+    el.textContent = "⚠ This checkpoint is " + days + " days old. Run /checkpoint in #team-3 to refresh it — the conversation has almost certainly moved.";
+  }
+})();
+</script>

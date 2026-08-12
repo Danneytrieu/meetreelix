@@ -1,0 +1,76 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkpoints</title>
+<style>
+:root{--bg:#faf7f2;--surface:#fff;--text:#1c1a17;--dim:#5c554b;--faint:#8a8175;
+  --border:#e0d8cb;--rule:#cfc5b4;--pink:#d6467f;--good:#2f7d59;--warn:#b06a12}
+@media (prefers-color-scheme:dark){:root{--bg:#14120f;--surface:#1c1917;--text:#f0ebe3;
+  --dim:#b3a99a;--faint:#8b8172;--border:#332d26;--rule:#3d362d;--pink:#ff7aae;
+  --good:#5fc292;--warn:#e0a24c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);padding:0 20px 80px;
+  font:16px/1.65 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+.wrap{max-width:760px;margin:0 auto}
+header{padding:54px 0 24px;border-bottom:3px double var(--rule);margin-bottom:32px}
+.kicker{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--pink);margin:0 0 16px}
+h1{font-size:clamp(30px,6vw,46px);margin:0 0 14px;letter-spacing:-.02em;font-weight:600;line-height:1.05}
+.standfirst{font-size:17.5px;color:var(--dim);margin:0;max-width:60ch}
+a.card{display:block;text-decoration:none;color:inherit;background:var(--surface);
+  border:1px solid var(--border);border-left:4px solid var(--pink);border-radius:4px;
+  padding:20px 24px;margin-bottom:14px}
+a.card:hover{border-color:var(--pink)}
+a.card h3{margin:0 0 6px;font-size:20px;letter-spacing:-.01em}
+a.card p{margin:0 0 10px;color:var(--dim);font-size:15px}
+a.card .meta{font:500 11.5px/1 ui-monospace,Menlo,monospace;color:var(--faint);display:flex;gap:16px;flex-wrap:wrap}
+.fresh{color:var(--good)} .stale{color:var(--warn)}
+.note{background:var(--surface);border:1px solid var(--border);border-radius:4px;
+  padding:18px 22px;margin:30px 0 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--text)}
+.note code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+footer{border-top:3px double var(--rule);margin-top:44px;padding-top:20px;font-size:13.5px;color:var(--faint)}
+footer a{color:var(--pink)}
+</style>
+
+<div class="wrap">
+<header>
+  <p class="kicker">Reelix · conversation checkpoints</p>
+  <h1>Checkpoints</h1>
+  <p class="standfirst">
+    One page per conversation, always showing the latest state. Each is overwritten when it's
+    re-run, so this list never grows past the number of rooms — nothing to clean out.
+  </p>
+</header>
+
+<a class="card" href="./team-3.html">
+  <h3>#team-3</h3>
+  <p>Three concepts live, no vote taken, and the same film written three times. Plus the six festival rules that changed under the team this week.</p>
+  <span class="meta"><span>Checkpoint 01</span><span>Aug 8 → Aug 12 · 115 messages</span><span class="age fresh" data-made="2026-08-12">fresh</span></span>
+</a>
+
+<div class="note">
+  <b>How these work.</b> A checkpoint reads a conversation and writes down where it stands:
+  what's on the table, who said what, where people disagree without having noticed, what the
+  rules say, and what to look at next. It reports the room — it never decides for it.
+  <br><br>
+  <b>One file per room.</b> Re-running <code>/checkpoint</code> overwrites the page rather than
+  adding one, so history lives in git and this index stays short. Each page states its own age
+  and flags itself once it's more than seven days old.
+  <br><br>
+  <b>Team rooms only.</b> Checkpoints on 1:1 or private channels are delivered as a direct
+  attachment and are never written here.
+</div>
+
+<footer>
+  <p><a href="../">← the war room</a></p>
+</footer>
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll(".age").forEach(function(el){
+    var d = Math.floor((Date.now() - new Date(el.dataset.made + "T00:00:00-07:00").getTime())/864e5);
+    el.textContent = d <= 0 ? "today" : d + (d === 1 ? " day old" : " days old");
+    el.className = "age " + (d >= 7 ? "stale" : "fresh");
+  });
+})();
+</script>
