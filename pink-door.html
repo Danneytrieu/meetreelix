@@ -1,0 +1,790 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE PINK DOOR — concept review vs the jury</title>
+<style>
+:root{
+  --bg:#faf7f2; --surface:#fff; --surface-2:#f3eee6; --text:#1c1a17; --dim:#5c554b;
+  --faint:#8a8175; --border:#e0d8cb; --rule:#cfc5b4;
+  --pink:#d6467f; --pink-soft:#fbe7ef;
+  --good:#2f7d59; --good-soft:#e4f2ea;
+  --warn:#b06a12; --warn-soft:#fbeedb;
+  --hot:#c0392b; --hot-soft:#fbe6e3;
+  --ink:#111;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#14120f; --surface:#1c1917; --surface-2:#231f1b; --text:#f0ebe3; --dim:#b3a99a;
+    --faint:#8b8172; --border:#332d26; --rule:#3d362d;
+    --pink:#ff7aae; --pink-soft:#33141f;
+    --good:#5fc292; --good-soft:#14261d;
+    --warn:#e0a24c; --warn-soft:#2b2013;
+    --hot:#ef7a6a; --hot-soft:#2c1714;
+    --ink:#fff;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.65 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  padding:0 20px 100px;
+}
+.wrap{max-width:860px;margin:0 auto}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+
+/* ---------- masthead ---------- */
+header.mast{padding:64px 0 34px;border-bottom:3px double var(--rule);margin-bottom:44px}
+.kicker{
+  font:600 11px/1 ui-monospace,Menlo,monospace; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--pink); margin:0 0 20px;
+}
+h1{
+  font-size:clamp(34px,7vw,60px); line-height:1.02; margin:0 0 18px; letter-spacing:-.02em;
+  font-weight:600;
+}
+h1 .door{color:var(--pink)}
+.standfirst{font-size:19px;line-height:1.55;color:var(--dim);margin:0 0 26px;max-width:64ch}
+.byline{
+  font:500 12px/1.6 ui-monospace,Menlo,monospace; color:var(--faint);
+  display:flex; flex-wrap:wrap; gap:8px 18px; padding-top:18px; border-top:1px solid var(--border);
+}
+.byline b{color:var(--text);font-weight:600}
+
+/* ---------- verdict ---------- */
+.verdict{
+  background:var(--surface); border:1px solid var(--border); border-left:5px solid var(--pink);
+  border-radius:4px; padding:26px 28px; margin:0 0 48px;
+}
+.verdict h2{margin:0 0 12px;font-size:23px;letter-spacing:-.01em}
+.verdict p{margin:0 0 12px;color:var(--dim);font-size:16.5px}
+.verdict p:last-child{margin-bottom:0}
+.verdict strong{color:var(--text)}
+
+/* ---------- sections ---------- */
+section{margin:0 0 60px;scroll-margin-top:20px}
+h2.sec{
+  font-size:12px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint); font-weight:600; margin:0 0 6px;
+}
+h3.big{font-size:clamp(24px,4.6vw,32px);line-height:1.15;margin:0 0 16px;letter-spacing:-.015em;font-weight:600}
+.lede{font-size:17.5px;color:var(--dim);margin:0 0 28px;max-width:66ch}
+h4{font-size:18px;margin:34px 0 12px;letter-spacing:-.01em}
+p{max-width:70ch}
+
+/* ---------- alert ---------- */
+.alert{
+  background:var(--hot-soft); border:1px solid var(--hot); border-radius:4px;
+  padding:20px 22px; margin:0 0 40px;
+}
+.alert .tag{
+  display:inline-block;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--hot);border:1px solid var(--hot);
+  padding:5px 8px;border-radius:3px;margin-bottom:12px;
+}
+.alert h4{margin:0 0 10px;font-size:19px}
+.alert p{margin:0 0 10px;font-size:15.5px;color:var(--text)}
+.alert p:last-child{margin:0}
+.alert.soft{background:var(--warn-soft);border-color:var(--warn)}
+.alert.soft .tag{color:var(--warn);border-color:var(--warn)}
+
+/* ---------- judge cards ---------- */
+.judges{display:grid;gap:18px;margin:0 0 12px}
+.jc{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.jc-head{display:flex;gap:16px;align-items:flex-start;padding:20px 22px;border-bottom:1px solid var(--border)}
+.jc-ini{
+  flex:0 0 46px;height:46px;display:grid;place-items:center;border-radius:3px;
+  background:var(--surface-2);border:1px solid var(--border);
+  font:600 15px/1 ui-monospace,Menlo,monospace;letter-spacing:.04em;
+}
+.jc-id h5{margin:0 0 4px;font-size:18px;letter-spacing:-.01em}
+.jc-id p{margin:0;font-size:13px;color:var(--faint);line-height:1.5}
+.jc-body{padding:20px 22px}
+.jc-body > p{margin:0 0 16px;font-size:15.5px;color:var(--dim)}
+.score{
+  display:inline-flex;align-items:center;gap:8px;font:600 11px/1 ui-monospace,Menlo,monospace;
+  letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:3px;margin-bottom:14px;
+}
+.score.g{background:var(--good-soft);color:var(--good)}
+.score.w{background:var(--warn-soft);color:var(--warn)}
+.score.h{background:var(--hot-soft);color:var(--hot)}
+.wl{display:grid;grid-template-columns:1fr 1fr;gap:20px;border-top:1px solid var(--border);padding-top:16px}
+.wl h6{
+  margin:0 0 8px;font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;
+}
+.wl .g h6{color:var(--good)} .wl .h h6{color:var(--hot)}
+.wl ul{margin:0;padding-left:16px}
+.wl li{font-size:14px;line-height:1.55;margin-bottom:6px;color:var(--dim)}
+@media(max-width:560px){.wl{grid-template-columns:1fr;gap:16px}}
+
+/* ---------- criteria table ---------- */
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 14px;border:1px solid var(--border);border-radius:4px}
+table{border-collapse:collapse;width:100%;min-width:560px;background:var(--surface);font-size:14.5px}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+th{
+  font:600 10px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);background:var(--surface-2);white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+td b{font-weight:600}
+.grade{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;white-space:nowrap}
+.grade.g{color:var(--good)} .grade.w{color:var(--warn)} .grade.h{color:var(--hot)}
+
+/* ---------- pro / con lists ---------- */
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:640px){.pc{grid-template-columns:1fr}}
+.pcbox{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px 22px}
+.pcbox.pro{border-top:3px solid var(--good)}
+.pcbox.con{border-top:3px solid var(--hot)}
+.pcbox h4{margin:0 0 14px;font-size:13px;font-family:ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase}
+.pcbox.pro h4{color:var(--good)} .pcbox.con h4{color:var(--hot)}
+.pcbox ol{margin:0;padding-left:20px}
+.pcbox li{margin-bottom:14px;font-size:15px;line-height:1.55}
+.pcbox li:last-child{margin-bottom:0}
+.pcbox li b{display:block;margin-bottom:2px}
+.pcbox li span{color:var(--dim);font-size:14px}
+
+/* ---------- fixes ---------- */
+.fix{
+  background:var(--surface);border:1px solid var(--border);border-radius:4px;
+  padding:20px 22px 20px 60px;position:relative;margin-bottom:14px;
+}
+.fix .n{
+  position:absolute;left:20px;top:20px;width:26px;height:26px;border-radius:50%;
+  background:var(--pink);color:#fff;display:grid;place-items:center;
+  font:600 12px/1 ui-monospace,Menlo,monospace;
+}
+.fix h4{margin:0 0 8px;font-size:17.5px}
+.fix p{margin:0 0 8px;font-size:15px;color:var(--dim)}
+.fix p:last-child{margin:0}
+.fix .keeps{
+  display:inline-block;margin-top:10px;font:600 10px/1.5 ui-monospace,Menlo,monospace;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--good);
+  background:var(--good-soft);padding:5px 9px;border-radius:3px;
+}
+
+/* ---------- questions ---------- */
+.qgroup{margin-bottom:34px}
+.qgroup > h4{
+  margin:0 0 4px;font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--pink);
+}
+.qgroup > p.gl{margin:0 0 16px;font-size:14px;color:var(--faint)}
+.q{border-left:2px solid var(--border);padding:0 0 0 18px;margin-bottom:20px}
+.q.kill{border-left-color:var(--hot)}
+.q h5{margin:0 0 6px;font-size:16.5px;font-weight:600;line-height:1.4}
+.q .rec{margin:0;font-size:14.5px;color:var(--dim)}
+.q .rec b{
+  color:var(--good);font:600 10px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;
+  text-transform:uppercase;margin-right:8px;
+}
+.q.kill .rec b{color:var(--hot)}
+
+/* ---------- diagram ---------- */
+.dia{
+  background:var(--surface);border:1px solid var(--border);border-radius:4px;
+  padding:22px;margin:0 0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.dia pre{
+  margin:0;font:12.5px/1.55 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  white-space:pre;color:var(--text);
+}
+.cap{font-size:13.5px;color:var(--faint);margin:0 0 34px;font-style:italic}
+
+/* ---------- clock ---------- */
+.clock{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:0 0 20px}
+.ck{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:16px 18px}
+.ck b{display:block;font:600 26px/1 ui-monospace,Menlo,monospace;color:var(--pink);margin-bottom:6px;letter-spacing:-.02em}
+.ck span{font-size:13px;color:var(--dim);line-height:1.45;display:block}
+
+footer{border-top:3px double var(--rule);margin-top:60px;padding-top:24px;font-size:13.5px;color:var(--faint)}
+footer p{margin:0 0 8px;max-width:70ch}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="kicker">Concept review · Team 3 · Higgsfield Global Film Festival</p>
+  <p style="margin:-10px 0 20px;font:500 12px/1 ui-monospace,Menlo,monospace"><a href="./" style="color:var(--faint);text-decoration:none;border-bottom:1px solid var(--border)">&larr; back to the war room</a></p>
+  <h1>THE <span class="door">PINK DOOR</span><br>— read against the jury</h1>
+  <p class="standfirst">
+    A strong premise, a real reveal, and a threshold at the centre of it — which happens to be
+    the exact thing the newest judge has built a thirty-year career on. Attached to the largest
+    production surface anyone has proposed, and a protagonist who currently does not change.
+    Here is what that means with twenty-two days on the clock.
+  </p>
+  <p class="byline">
+    <span><b>Prepared</b> 2026-08-12</span>
+    <span><b>Deadline</b> Sep 3, 11:59pm PT</span>
+    <span><b>Jury</b> Catmull · Papamichael · Anderson</span>
+    <span><b>Verdict</b> Keep — aim it at Anderson</span>
+  </p>
+</header>
+
+<div class="verdict">
+  <h2>The short answer</h2>
+  <p>
+    <strong>Yes, it is a good concept — and it is not yet a story.</strong> What you have is an
+    excellent <em>premise</em> (a door that shouldn't exist, opening onto the wrong world) and one
+    genuinely good <em>turn</em> (the monkeys aren't stealing, they're building). Both of those are
+    hard to invent and you have them.
+  </p>
+  <p>
+    <strong>The war room's own doctrine tells you what to do with that.</strong> It says a third
+    juror is a third way to be <em>forgiven</em>, not a third bar to clear — that a film
+    <b>excellent at one thing</b> and competent elsewhere beats a film that is uniformly good,
+    because it gives one person in the room something to fight for. So stop trying to make Pink
+    Door please all three. <strong>Aim it at Anderson and make the other two unable to object.</strong>
+  </p>
+  <p>
+    That is a much better position than it sounds, because of a detail on his judge card most
+    people will skim past. Anderson's stated signature — the thing he says runs through every film
+    he has made — is <strong>the doorway</strong>. <i>"Pushing through a proscenium arch, into a
+    scene."</i> Your entire concept is a boy stepping through a threshold into a world that
+    shouldn't be on the other side of it. Nobody else on the slate is handing him that.
+  </p>
+  <p>
+    What still has to be fixed is the thing Catmull grades hardest: <strong>the boy ends the film
+    exactly where he started, having lost nothing.</strong> Curious, then scared, then helpful,
+    then home. That is the shape Catmull has spent forty years rejecting — and it costs you one
+    scene to fix, not a rewrite. And the second problem is days, not taste: <strong>jungle + open
+    ocean + underwater + shoreline + streets + rooftops + markets + traffic</strong> is the biggest
+    build on the slate by a wide margin, in twenty-two days.
+  </p>
+</div>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">01 · The single best argument for this concept</h2>
+  <h3 class="big">Anderson's signature is the doorway. You built a film about a door.</h3>
+
+  <p class="lede">
+    This is the part of the war room worth re-reading before Team 3 meets, because it is the
+    thing that makes Pink Door a contender rather than a nice idea.
+  </p>
+
+  <p>
+    Paul W. S. Anderson joined the jury on Aug 6, and his card lists three quotes. Two are about
+    speed and locations. The third is the one that matters here — it is filed under
+    <i>"on doorways, and why they run through all his films"</i>:
+  </p>
+
+  <blockquote style="margin:0 0 24px;padding:18px 22px;background:var(--pink-soft);border-left:3px solid var(--pink);border-radius:0 4px 4px 0;font-size:19px;line-height:1.5;font-style:italic">
+    "Pushing through a proscenium arch, into a scene."
+    <span style="display:block;margin-top:10px;font:600 11px/1 ui-monospace,Menlo,monospace;font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:var(--pink)">Paul W. S. Anderson</span>
+  </blockquote>
+
+  <p>
+    A boy in a jungle pushes through a standing pink door and falls into the middle of an ocean.
+    That <em>is</em> the proscenium arch, done literally, and it is the image the whole concept is
+    organised around. His card also asks for <b>doorways, thresholds, descents — space that reveals
+    itself as you move through it</b>. You have a threshold in act one, a descent into water
+    immediately after, and a second threshold built by hand in act four.
+  </p>
+  <p>
+    <strong>No other concept on the slate offers him this</strong>, and the war room's own strategy
+    note explains why that is worth more than being liked by everybody:
+    <i>"Jurors argue for what they love. A film that is excellent at one thing and competent
+    elsewhere beats a film that is uniformly good — because it gives one person in that room
+    something to fight for."</i>
+  </p>
+
+  <div class="alert soft">
+    <span class="tag">Coordinate this</span>
+    <h4>Concept 07 — BREACH — is already fishing in the same water</h4>
+    <p>
+      BREACH was written after Anderson was named, specifically because nothing else on the slate
+      was built for him, and the war room rates it 3/3/3. Its pitch is a stairwell — <i>"the most
+      readable space in cinema"</i> — with a threat and a rule the audience can learn.
+    </p>
+    <p>
+      The assignment rule is <b>one lane per team, no two teams take the same shape</b>, and
+      near-duplicate entries can be collapsed into one. Pink Door and BREACH are not the same film,
+      but they are courting the same juror through the same door-and-geography grammar. Someone has
+      to say out loud which team owns the Anderson lane before both spend three weeks on it.
+    </p>
+  </div>
+
+  <p>
+    One more thing from the channel, and treat it as the brief: <b>zebruin</b> pointed out that
+    Anderson's best moment in <i>Resident Evil</i> was a blast door he couldn't afford — played as
+    a shadow and a spotlight on cardboard, and more emotional than the door would have been.
+    Anderson does not reward an expensive-looking chase. He rewards an <em>invented</em> one.
+    Which is fortunate, because the invented one is the only version you can finish by Sep 3.
+  </p>
+</section>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">02 · The panel</h2>
+  <h3 class="big">How each of the three will read this film</h3>
+  <p class="lede">
+    A film needs two of these three to place. Right now Pink Door has one strong yes, one
+    conditional, and one likely no.
+  </p>
+
+  <div class="judges">
+
+    <div class="jc">
+      <div class="jc-head">
+        <div class="jc-ini">EC</div>
+        <div class="jc-id">
+          <h5>Edwin Catmull</h5>
+          <p>Co-founder of Pixar · ex-President, Pixar &amp; Disney Animation · 5× Oscar · Turing Award</p>
+        </div>
+      </div>
+      <div class="jc-body">
+        <span class="score w">Conditional — fixable in one scene</span>
+        <p>
+          He invented the category your monkeys belong to. <i>Luxo Jr.</i>, 1986: a non-human
+          thing given a want. Wordless, child-legible, found-family — this is his native language
+          and half the concept sits comfortably inside it.
+        </p>
+        <p>
+          Then it hands him the one shape he reliably rejects. His published test is
+          <b>a character who wants something and changes</b>, and <b>an ending that costs the
+          character something</b>. Your boy wants nothing at the start, loses nothing at the end,
+          and spends act three helping someone else's plan. The chase, meanwhile, escalates
+          spectacle without escalating feeling — his named kill, verbatim.
+        </p>
+        <div class="wl">
+          <div class="g">
+            <h6>Lands</h6>
+            <ul>
+              <li>Wordless emotional logic a child can follow</li>
+              <li>Non-human characters with a genuine want</li>
+              <li>Stylization — animation is his first language, not a lesser form</li>
+              <li>The reveal: theft re-read as devotion</li>
+            </ul>
+          </div>
+          <div class="h">
+            <h6>Dies</h6>
+            <ul>
+              <li>A protagonist who ends where he began</li>
+              <li>An ending that costs nobody anything</li>
+              <li>Spectacle escalating with no emotional escalation</li>
+              <li>World-building with nobody to care about</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="jc">
+      <div class="jc-head">
+        <div class="jc-ini">PP</div>
+        <div class="jc-id">
+          <h5>Phedon Papamichael, ASC</h5>
+          <p>Cinematographer · 2× Oscar &amp; BAFTA nominee · Nebraska, Ford v Ferrari, Walk the Line</p>
+        </div>
+      </div>
+      <div class="jc-body">
+        <span class="score h">The hard no — and the reason to cut scope</span>
+        <p>
+          He shot a whole feature in black and white about a man walking to Nebraska. His stated
+          preference is <b>one location used honestly</b>, light with a source you can point at,
+          and coverage that actually cuts. He reads a film for eyeline, screen direction, and
+          whether the space holds together between shots.
+        </p>
+        <p>
+          Pink Door currently offers him seven-plus environments, water, crowds, vehicles and a
+          variable number of near-identical animals — every one of which is a place the geometry
+          can change between cuts. He explicitly rejected panning wide shots on
+          <i>Ford v Ferrari</i> as the grammar of car commercials. A rooftop-and-market montage
+          is the exact thing he was rejecting.
+        </p>
+        <div class="wl">
+          <div class="g">
+            <h6>Lands</h6>
+            <ul>
+              <li>The jungle: one location, one light source, honest</li>
+              <li>A held face — the boy at the open door, before he steps</li>
+              <li>Texture, grain, the look of a real lens</li>
+            </ul>
+          </div>
+          <div class="h">
+            <h6>Dies</h6>
+            <ul>
+              <li>Geometry that changes between cuts</li>
+              <li>Coverage with no master — a chase that never establishes its space</li>
+              <li>Mixed colour temperature with no justification</li>
+              <li>The unmotivated floating push-in</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="jc">
+      <div class="jc-head">
+        <div class="jc-ini">PA</div>
+        <div class="jc-id">
+          <h5>Paul W. S. Anderson</h5>
+          <p>Director · the <i>Resident Evil</i> franchise · <i>Mortal Kombat</i> · <i>Event Horizon</i> · <i>Alien vs. Predator</i> · joined the jury Aug 6</p>
+        </div>
+      </div>
+      <div class="jc-body">
+        <span class="score g">Your yes — build the film for him</span>
+        <p>
+          <b>Not Paul <i>Thomas</i> Anderson</b> — a completely different filmmaker, and confusing
+          them in a pitch will cost you. This is the genre craftsman: kinetic, physical,
+          unapologetic. Thirty years of films where something is hunting someone through a space,
+          and unusually rigorous about making that space <b>readable</b>.
+        </p>
+        <p>
+          The doorway quote is the strongest single argument this concept has. His other two are
+          near-instructions for your second act: <i>"No slow motion — the action is
+          bone-crunchingly fast"</i> and <i>"big, gritty, real locations."</i> A monkey chase
+          through a market is his register exactly — provided you never lose track of where anyone
+          is. He also insists his own designers play the games he adapts, because he wants the DNA,
+          not the logo. So don't make a film that <em>looks</em> like his. Make one built the way
+          his are.
+        </p>
+        <div class="wl">
+          <div class="g">
+            <h6>Lands</h6>
+            <ul>
+              <li><b>Doorways, thresholds, descents</b> — space that reveals itself as you move through it</li>
+              <li><b>Readable geography</b> — the audience always knows where the threat and the exit are</li>
+              <li>Genre played straight — no apology, no irony</li>
+              <li>Momentum: a film going somewhere at speed</li>
+              <li>Production design that builds a world, not a backdrop</li>
+            </ul>
+          </div>
+          <div class="h">
+            <h6>Dies</h6>
+            <ul>
+              <li>A mood piece with no engine</li>
+              <li>Action you cannot follow — cut so fast or close the space dissolves</li>
+              <li>Slow motion used to manufacture weight</li>
+              <li><b>A concept that stays a concept and never becomes a scene</b></li>
+              <li>Pastiche of his own films — the DNA, not the costume</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">03 · The scorecard</h2>
+  <h3 class="big">Against the four official criteria</h3>
+  <p class="lede">
+    Views and likes are not judged — the public post is a requirement, never a criterion.
+    These four are the whole grade.
+  </p>
+
+  <div class="tscroll">
+  <table>
+    <thead>
+      <tr><th>Criterion</th><th>Grade</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Directing &amp; Storytelling</b><br><span style="color:var(--faint);font-size:13px">clarity, emotional impact, POV</span></td>
+        <td class="grade h">WEAK</td>
+        <td>Clarity is excellent — a child follows it perfectly. Emotional impact is where it fails: no want, no cost, no change. The protagonist is also passive for the entire third act; the monkeys have the plan and execute it.</td>
+      </tr>
+      <tr>
+        <td><b>Visual Craft</b><br><span style="color:var(--faint);font-size:13px">composition, coherence, world-building</span></td>
+        <td class="grade h">AT RISK</td>
+        <td>Not for lack of ambition — because of it. Seven-plus environments, water, crowds, vehicles and an unbounded animal cast in twenty-two days is where coherence goes to die. This is the line Papamichael reads first.</td>
+      </tr>
+      <tr>
+        <td><b>Sound &amp; Editing</b><br><span style="color:var(--faint);font-size:13px">sound design, music, pacing</span></td>
+        <td class="grade g">STRONG</td>
+        <td>Genuine advantage. Audio is fully exempt from the platform rule — you can make it anywhere, with any tool. A wordless film lives or dies on sound design, and jungle→ocean→city is three distinct sonic worlds handed to you by the premise.</td>
+      </tr>
+      <tr>
+        <td><b>Originality &amp; Concept</b><br><span style="color:var(--faint);font-size:13px">ambition, novelty, use of the medium</span></td>
+        <td class="grade w">MIXED</td>
+        <td>The <em>door onto open ocean</em> is a genuinely original image nobody else will have. The magic-door framework is not — Monsters Inc, Slumberland, Coraline, Narnia. Novelty here has to come from execution, not premise. "Use of the medium" is currently unclaimed.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">Two of four are currently below the line. Both are fixable without touching the premise.</p>
+</section>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">04 · The balance sheet</h2>
+  <h3 class="big">Pros and cons, ranked by how much they matter</h3>
+
+  <div class="pc">
+    <div class="pcbox pro">
+      <h4>What is genuinely strong</h4>
+      <ol>
+        <li><b>One repeatable icon</b><span>The pink door is a poster, a packshot, a thumbnail and a title card in a single object. Nothing else on the slate has that. It is also why this is our best shot at Audience Choice — a separate $100,000 lane the quiet films cannot win.</span></li>
+        <li><b>It can be wordless</b><span>No lipsync risk, no language barrier for a global jury, and no dependency on a good voice performance. That removes the biggest technical failure mode in AI shorts and the biggest craft failure mode at once.</span></li>
+        <li><b>The reveal is real</b><span>"They're not stealing, they're building" retroactively re-reads every previous shot. That is a genuine turn, not a twist ending bolted on — and it is a hard thing to invent.</span></li>
+        <li><b>Non-human characters with a want</b><span>The monkeys are the most Catmull-shaped element in the whole concept, and right now they're supporting cast.</span></li>
+        <li><b>Anderson has no other advocate on the slate</b><span>Every other concept we have is a two-hander in one room. Pink Door is the only one that speaks to a third of the jury.</span></li>
+        <li><b>The team wants to make it</b><span>Not a soft point. Catmull's most-quoted line is that a brilliant team will fix a mediocre idea, and a mediocre team will ruin a good one. Conviction is a real input.</span></li>
+      </ol>
+    </div>
+
+    <div class="pcbox con">
+      <h4>What will lose you the festival</h4>
+      <ol>
+        <li><b>Nobody pays anything</b><span>The boy leaves home, sees the world, comes home. Nothing is risked, nothing is lost, nothing is learned that costs. This is Catmull's primary rejection criterion and it is currently sitting in the middle of the film.</span></li>
+        <li><b>The scope is the largest on the slate</b><span>Jungle, ocean surface, underwater, shoreline, city street, rooftops, market, traffic, build site. Generated from scratch, on-platform only, in twenty-two days. Water and crowds are the two most expensive things in AI video.</span></li>
+        <li><b>"The monkeys" is an unbounded cast</b><span>A troop means an unknowable number of near-identical characters that must stay consistent across ~45 shots. This is the worst case our element registry can be handed. Three named monkeys is a production; a troop is a gamble.</span></li>
+        <li><b>The protagonist is passive</b><span>He is curious, then he runs, then he hides, then he watches, then he helps. He never makes a decision that costs him. Meanwhile the monkeys drive the entire third act.</span></li>
+        <li><b>The stated theme isn't in the plot</b><span>"Never judge a book by its cover" — nothing in the story is about appearances deceiving. That mismatch isn't a labelling error; it's the signal that the theme hasn't been found yet.</span></li>
+        <li><b>The chase is the AI-trailer trap wearing a costume</b><span>Rooftops, markets, traffic, montage. Without a master shot and a fixed landmark it becomes forty disconnected beauty shots — the exact pile the research says eliminates itself at shortlist.</span></li>
+        <li><b>Derivative surface area</b><span>Monsters Inc doors, Slumberland, Jumanji, Aladdin's Abu. No IP is being used, so this is not an eligibility problem — it is a scoring problem on Originality, and it is entirely a design-language decision.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">05 · The fix</h2>
+  <h3 class="big">Three changes and this becomes the strongest entry we have</h3>
+  <p class="lede">
+    None of these touch the premise, the door, the reveal, or the ending image.
+    All three can be decided in one meeting.
+  </p>
+
+  <div class="fix">
+    <span class="n">1</span>
+    <h4>Give the ending a cost</h4>
+    <p>
+      The door needs one last piece and there is nothing left to take. The boy gives up the one
+      thing he carried out of the jungle — or one monkey stays on the city side, holding the frame
+      open, and does not come through. Someone loses something. That is the entire fix.
+    </p>
+    <p>
+      Then plant its opposite at the top: give the boy a want <em>before</em> the door.
+      He is outgrowing the jungle. He is the only one of his kind in it. Now the city
+      <b>tempts</b> him, going home becomes a choice instead of a default, and the climax stops
+      being "the door is finished" and becomes "he decides to walk through it."
+    </p>
+    <p class="keeps">Fixes: Catmull · Directing &amp; Storytelling · the missing theme</p>
+  </div>
+
+  <div class="fix">
+    <span class="n">2</span>
+    <h4>Cast three monkeys, not a troop</h4>
+    <p>
+      Three named characters with distinct silhouettes — one blessed reference each in the element
+      registry, cap of four elements in frame. Crowd density only in wide shots you generate once
+      and never have to match. Three characters can also carry a personality each, which a troop
+      never can, and it gives you a specific monkey to lose in Fix 1.
+    </p>
+    <p class="keeps">Fixes: consistency · Visual Craft · your credit burn</p>
+  </div>
+
+  <div class="fix">
+    <span class="n">3</span>
+    <h4>Keep the ocean. Shrink the city to three places.</h4>
+    <p>
+      The door opening onto open water is the most original image in the concept and the one nobody
+      else at this festival will have — protect it. Then hold the city to <b>one street, one high
+      place, one build site</b>, established with a real master shot and one landmark visible from
+      every angle so the geography always reads.
+    </p>
+    <p>
+      That is not a compromise, it is the Anderson brief: invention under constraint. A chase told
+      through reaction, sound, and a single repeated landmark will beat a montage of rooftops that
+      never cut together — and it is the only version you can finish by Sep 3.
+    </p>
+    <p class="keeps">Fixes: Papamichael · scope · the AI-trailer trap</p>
+  </div>
+
+  <h4>The shape after the fix</h4>
+  <div class="dia">
+<pre>
+        BEFORE  (round trip — nothing changes)
+
+  jungle ──► door ──► ocean ──► city ──► chase ──► build ──► jungle
+   happy                                                      happy
+
+
+        AFTER  (a want, a temptation, a price)
+
+  jungle ──► door ──► ocean ──► city ──► chase ──► build ──► jungle
+  restless            wonder    tempted   cost     choice     home
+     │                                      │                   ▲
+     └──────────── he wants OUT ────────────┘                   │
+                                    he gives something up ──────┘
+</pre>
+  </div>
+  <p class="cap">
+    In plain English: same beats, same images, same ending shot — but now he leaves wanting
+    something, the city offers it to him, and going home is a choice he pays for.
+  </p>
+</section>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">06 · Before anything else</h2>
+  <h3 class="big">The questions the team has to answer</h3>
+  <p class="lede">
+    Grouped by what they cost you if you get them wrong. Each carries a recommended answer —
+    argue with it, but do not leave it blank.
+  </p>
+
+  <div class="alert">
+    <span class="tag">Answer today</span>
+    <h4>One rule could kill this concept outright, and our own summary of it is ambiguous</h4>
+    <p>
+      Eligibility gate 07 in our research reads: <i>"no sexual content, no character depicted under
+      18."</i> Read plainly and out of context, that prohibits a child protagonist — and our lead is
+      a boy. Read in context, it is almost certainly a rule about sexualising minors.
+    </p>
+    <p>
+      <strong>Do not proceed on the charitable reading.</strong> Someone pulls the actual festival
+      terms and quotes the clause verbatim in the channel before a single credit is spent on a
+      character design. If it is genuinely a blanket ban, this concept needs an adult or non-human
+      lead — a change you want to make on day one, not on day fourteen.
+    </p>
+  </div>
+
+  <div class="qgroup">
+    <h4>Eligibility — these end the entry, not just weaken it</h4>
+    <p class="gl">No judge sees the film until all nine gates clear.</p>
+
+    <div class="q kill">
+      <h5>1. Does the age clause prohibit a child protagonist, or only sexualisation of minors?</h5>
+      <p class="rec"><b>Recommend</b> Quote the clause verbatim before designing the lead. If ambiguous, age him to eighteen-plus — it costs the concept almost nothing and removes the only existential risk on the page.</p>
+    </div>
+    <div class="q kill">
+      <h5>2. Who posts publicly, from which public account, and on what date?</h5>
+      <p class="rec"><b>Recommend</b> Assign a name now. Higgsfield names the missing social post as the single most common reason a strong entry is ruled non-eligible — it must be a public account, viewable logged-out, live through the end of the festival.</p>
+    </div>
+    <div class="q kill">
+      <h5>3. Is anyone on Team 3's roster also on another team's roster?</h5>
+      <p class="rec"><b>Recommend</b> Audit all five rosters this week. One shared name caps both entries at a single prize between them — leader or not. Keep every roster disjoint.</p>
+    </div>
+    <div class="q kill">
+      <h5>4. Has the Reelix-to-submission-project pre-flight actually been fired?</h5>
+      <p class="rec"><b>Recommend</b> Do it before any real generation. If Reelix generations land in the general library instead of inside the submission project, the asset audit fails. This one test decides the pipeline architecture for all five teams.</p>
+    </div>
+    <div class="q">
+      <h5>5. Is every named team member subscription-active — both at project creation and at submission?</h5>
+      <p class="rec"><b>Recommend</b> Confirm in writing per person, and budget the renewals now across all five teams rather than discovering a lapse on the 30th.</p>
+    </div>
+    <div class="q">
+      <h5>6. Who owns the project, and is the cross-team split written down?</h5>
+      <p class="rec"><b>Recommend</b> Name the Team Leader (project owner and payee) and sign the split before submission. Higgsfield explicitly will not mediate intra-team distribution — it is a private contract they never see.</p>
+    </div>
+  </div>
+
+  <div class="qgroup">
+    <h4>Story — answer before a single shot is generated</h4>
+    <p class="gl">Every one of these is cheap now and expensive on August 25th.</p>
+
+    <div class="q">
+      <h5>7. What does the boy lose? One sentence.</h5>
+      <p class="rec"><b>Recommend</b> A monkey stays behind. It is the cheapest to shoot, the hardest to forget, and it makes the reveal hurt instead of charm.</p>
+    </div>
+    <div class="q">
+      <h5>8. Whose film is this — the boy's or the monkeys'?</h5>
+      <p class="rec"><b>Recommend</b> Write the answer at the top of the script and never contradict it. If it stays the boy's, he must drive act three. If it becomes the monkeys', you inherit the Luxo Jr. lineage and Catmull's full attention — the stronger option, and the harder script.</p>
+    </div>
+    <div class="q">
+      <h5>9. What does the boy want in the jungle, before the door appears?</h5>
+      <p class="rec"><b>Recommend</b> Something the city can offer him. Without it the door is an accident that happens to a contented boy, and there is no arc to grade.</p>
+    </div>
+    <div class="q">
+      <h5>10. Why does he choose to go back, when the city has what he wanted?</h5>
+      <p class="rec"><b>Recommend</b> Make this the climax — not the completion of the door. The door being finished is a plot event; his decision is the film.</p>
+    </div>
+    <div class="q">
+      <h5>11. What is the theme, stated as something that happens in the plot?</h5>
+      <p class="rec"><b>Recommend</b> Drop "never judge a book by its cover" — it isn't in the story. What is in the story is <i>home is who follows you into the water.</i> Write the version you can point at on screen.</p>
+    </div>
+    <div class="q">
+      <h5>12. What are the rules of the door — and does it open again?</h5>
+      <p class="rec"><b>Recommend</b> Decide and never break it. One rule, established in act one, honoured in act four. Undefined magic is where child audiences check out and juries stop trusting you.</p>
+    </div>
+    <div class="q">
+      <h5>13. What are the four act lengths against a 3:20 target?</h5>
+      <p class="rec"><b>Recommend</b> Budget the minutes before you write. Three minutes is a hard floor — 2:59 is not screened. Four acts in 3:20 means roughly 40s jungle / 40s ocean / 80s city / 40s home, and the chase is the part that will try to eat everyone else's time.</p>
+    </div>
+  </div>
+
+  <div class="qgroup">
+    <h4>Craft — these decide whether you finish</h4>
+    <p class="gl">Consistency is the whole game at this scope.</p>
+
+    <div class="q">
+      <h5>14. Stylized or photoreal?</h5>
+      <p class="rec"><b>Recommend</b> Stylized. It is Catmull's first language, it sidesteps the uncanny valley that will sink half the field, it is the most distinctive thing you can hand a jury watching photoreal entry after photoreal entry — and photoreal monkeys in water in twenty-two days is a coin flip.</p>
+    </div>
+    <div class="q">
+      <h5>15. Wordless, or dialogue?</h5>
+      <p class="rec"><b>Recommend</b> Wordless. Zero lipsync risk, no language barrier for a global jury, and it forces the sound design to carry — your strongest criterion.</p>
+    </div>
+    <div class="q">
+      <h5>16. How many named monkeys, and are their silhouettes distinguishable in one frame?</h5>
+      <p class="rec"><b>Recommend</b> Three. One blessed reference each in the element registry, locked before any shot generation, cap of four elements in frame.</p>
+    </div>
+    <div class="q">
+      <h5>17. Where does the light come from, in each environment?</h5>
+      <p class="rec"><b>Recommend</b> Write one sentence per environment and put it in the DNA. It is the first thing Papamichael reads, and unjustified mixed colour temperature is on his named kill list.</p>
+    </div>
+    <div class="q">
+      <h5>18. What is the master shot of the city sequence, and what landmark is visible from every angle?</h5>
+      <p class="rec"><b>Recommend</b> Generate the master first and cut everything against it. "Coverage with no master" is the exact failure that turns a chase into forty disconnected beauty shots.</p>
+    </div>
+    <div class="q">
+      <h5>19. What is the drop-dead date for locked character refs and the style sheet?</h5>
+      <p class="rec"><b>Recommend</b> Aug 15. Nothing generated before the sheet is locked survives, and every day of slippage comes straight out of the edit at the end.</p>
+    </div>
+    <div class="q">
+      <h5>20. When does Team 3 screen its first assembly to the other teams?</h5>
+      <p class="rec"><b>Recommend</b> Put a Braintrust date on the Schedule tab now — around Aug 22. Candid notes, no authority: the room advises, the director decides. It is Catmull's own method and he would recognise it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<section>
+  <h2 class="sec">07 · The clock</h2>
+  <h3 class="big">What twenty-two days actually buys</h3>
+  <div class="clock">
+    <div class="ck"><b>22</b><span>days to the wall — Sep 3, 11:59pm PT</span></div>
+    <div class="ck"><b>3:00</b><span>minimum runtime. A hard floor; target 3:20</span></div>
+    <div class="ck"><b>~45</b><span>shots at this scope, all generated on-platform from scratch</span></div>
+    <div class="ck"><b>14</b><span>winners: 1st $500K · 2nd $200K · 3rd $100K · Audience $100K · 10× $10K</span></div>
+  </div>
+  <p>
+    Higgsfield rescheduled on Aug 7 — <i>"same contest, more time to prepare"</i> — pushing the
+    opening back three days and the deadline back three. <b>The generation window opened Aug 10 and
+    closes Sep 3.</b> Nothing made before Aug 10 counts, and preparation is the only thing you may
+    legally do before the gun: script, storyboard, references gathered off-platform, and every
+    decision on this page.
+  </p>
+  <p>
+    The deadline means the cut uploaded <em>and</em> the public post already live — not one then the
+    other. Dates can be extended but never moved earlier, so plan against Sep 3 and treat any
+    further slip as a gift. Audio is fully exempt from the platform rule and can be made anywhere,
+    but every audio file still has to be uploaded into the submission project.
+  </p>
+  <p>
+    <strong>Never clean up the project.</strong> The eligibility audit compares the final cut against
+    the project's own generation history — if the project no longer retains enough of its underlying
+    assets to support that check, the entry can be marked non-eligible.
+  </p>
+</section>
+
+<footer>
+  <p>
+    <b>Sources.</b> Judge profiles, the nine eligibility gates, the four criteria and the prize
+    structure are from our own festival research in <span class="mono">tools/meetreelix-web/</span>.
+    The live war room is <b>current</b>: it carries a full Anderson card, a seventh concept written for him, per-juror ratings, and the rescheduled Aug 10 → Sep 3 window. Note that <span class="mono">tools/meetreelix-web/</span> inside the workspace is a <b>stale mirror</b> — its own STATE.md says do not edit it, and an earlier draft of this review was written off it by mistake.
+  </p>
+  <p>
+    <b><a href="./" style="color:var(--pink)">The war room</a></b> has the full slate, the nine gates and the live festival clock. <b>Nothing here is a veto.</b> The room advises; the director decides.
+    <i>The film, not the filmmaker, is under the microscope.</i>
+  </p>
+</footer>
+
+</div>
