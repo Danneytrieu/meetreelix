@@ -2091,12 +2091,13 @@ $("vMine").addEventListener("click",()=>setView("mine"));
    Everything below is from the Official Rules timeline, not the marketing page. */
 const FEST = [
   {k:"reveal",  t:"Program reveal",        d:"2026-08-03", note:"Rules published, first two judges named."},
-  {k:"judge3",  t:"Paul W. S. Anderson named", d:"2026-08-06", note:"The third judge, and the one who most changes what we should make."},
+  {k:"judge3",  t:"Paul W. S. Anderson named", d:"2026-08-06", note:"The third judge, and the one who broke the two-man conversation about restraint."},
   {k:"delay",   t:"Start pushed to Aug 10", d:"2026-08-07", note:"Higgsfield moved the opening back three days and the deadline back three. Three extra days to prepare — and preparation is the only thing you may legally do before the gun."},
   {k:"open",    t:"Competition opens",     d:"2026-08-10", note:"Submission projects unlock. The generation window starts — nothing made before today counts.", major:true},
   {k:"deadline",t:"Submission deadline",   d:"2026-09-03", time:"23:59", note:"11:59 PM Pacific. Final cut uploaded AND the public social post live.", major:true},
+  {k:"judge4",  t:"Alex Proyas named",     d:"2026-08-13", note:"The fourth judge. A second stylist — the panel is now 3 designers to 1 naturalist, and the slate was rated for a jury of three."},
   {k:"screen",  t:"Screening & shortlist", d:"2026-09-04", end:"2026-09-24", note:"Higgsfield checks eligibility, then the creative team picks the shortlist."},
-  {k:"jury",    t:"Jury review",           d:"2026-09-25", end:"2026-10-01", note:"Catmull, Papamichael and Anderson choose 1st / 2nd / 3rd and ten Honorable Mentions."},
+  {k:"jury",    t:"Jury review",           d:"2026-09-25", end:"2026-10-01", note:"Catmull, Papamichael, Anderson and Proyas choose 1st / 2nd / 3rd and ten Honorable Mentions."},
   {k:"winners", t:"Winners announced",     d:"2026-10-02", note:"First week of October. Exact date to be confirmed."}
 ];
 /* Pacific is UTC-7 in August/September (PDT). */
@@ -2122,7 +2123,7 @@ function festState(){
     phase="Screening & shortlist"; sub="Out of your hands. Keep the social post public.";
     target=jury; targetLabel="until jury review";
   } else if(now < end){
-    phase="Jury review"; sub="Catmull, Papamichael and Anderson are watching the shortlist right now.";
+    phase="Jury review"; sub="Catmull, Papamichael, Anderson and Proyas are watching the shortlist right now.";
     target=end; targetLabel="until winners";
   } else {
     phase="Results"; sub="Winners announced."; target=null; targetLabel="";
@@ -2186,6 +2187,19 @@ const JUDGES = [
     ],
     win:["Genre played straight — horror that is scary, action that is fast, no apology and no irony","<b>Readable geography</b> — the audience always knows where the threat is and where the exit is","Doorways, thresholds, descents: space that reveals itself as you move through it","A physical, present danger with real consequences","Production design that builds a world, not a backdrop","Momentum — a film that is going somewhere at speed"],
     lose:["A mood piece with no engine","Slow motion used to manufacture weight","Action you cannot follow — cut so fast or so close that the space dissolves","A concept that stays a concept and never becomes a scene","Pastiche of his own films — he wants the DNA, not the costume"]
+  },
+  {
+    key:"proyas", ini:"AP", name:"Alex Proyas",
+    role:"Director · <i>The Crow</i>, <i>Dark City</i>, the Oscar-nominated <i>I, Robot</i> · $800M at the box office · #1 opening in two different decades · named to the jury 2026-08-13",
+    films:["The Crow","Dark City","I, Robot","Knowing","Gods of Egypt","Garage Days"],
+    read:"The fourth juror, and the one who <b>rebalances the panel</b>. He is a designer first: he came out of music videos and built <i>Dark City</i> as a place that physically rearranges itself while people sleep. In his films the <b>world is a character</b> and usually the antagonist — rain, verticality, permanent night, architecture that means something. He is the second stylist on a jury that used to be one stylist and one naturalist, and he is the only juror whose signature films are about <b>memory and stolen identity</b>. He has also been publicly, loudly sceptical of AI filmmaking — which cuts both ways: he will not be impressed by the tool, and he will notice immediately if the tool is the only thing you brought.",
+    quotes:[
+      {q:"It can't rain all the time.", c:"The Crow"},
+      {q:"I wanted to create a world that was a character in the film.", c:"on Dark City"},
+      {q:"Shut it down.", c:"his 2024 open letter on AI-generated film — know that this is the room you are entering"}
+    ],
+    win:["A world with a point of view — designed, committed, not defaulted","Stylization carried all the way through, not applied as a filter","Memory, identity, grief — his lifelong subject","Vertical, architectural space used to say something","Darkness that is composed, not just underexposed","A single strong image the film is built around"],
+    lose:["A world that is only a backdrop","Photoreal-by-default with no design decision inside it","The tool as the point — he is the most likely juror to smell a prompt","Half-committed style: realistic film with a couple of stylish shots dropped in","Grief and memory used as set dressing for a twist"]
   }
 ];
 
@@ -2213,52 +2227,52 @@ const GATES = [
 ];
 
 const SLATE = [
-  {no:"01", jury:{ec:3,pp:2,pa:1}, key:"keeper", title:"KEEPER", fit:"Catmull lane",
+  {no:"01", jury:{ec:3,pp:2,pa:1,ap:3}, key:"keeper", title:"KEEPER", fit:"Catmull lane",
    art:"art/keeper.jpg",
    log:"A lighthouse automaton has kept the lamp burning for a ship that stopped coming forty years ago. The night the lamp finally dies, it has to decide whether to become the light.",
    meta:["No dialogue","1 location","1 character","~38 shots","Stylized or photoreal"],
    why:"This is the <i>Luxo Jr.</i> lineage — a non-human object given a want, and Catmull invented the category in 1986. No dialogue means no lipsync risk and no language barrier for a global jury. One location and one character is the smallest drift surface on the slate.",
    risk:"The character design has to be locked cold in week one. If the automaton drifts, there is nothing else on screen to carry you."},
 
-  {no:"02", jury:{ec:2,pp:3,pa:1}, key:"quiet", title:"QUIET", fit:"Papamichael lane",
+  {no:"02", jury:{ec:2,pp:3,pa:1,ap:1}, key:"quiet", title:"QUIET", fit:"Papamichael lane",
    art:"art/quiet.jpg",
    log:"A father and his grown daughter share a kitchen table at dawn. He was bitten four hours ago. She hasn't noticed yet. He has already decided how the morning ends.",
    meta:["Dialogue","1 location","2 characters","~42 shots","Photoreal"],
    why:"Your zombie idea with the spectacle surgically removed — the infection never appears on screen. Two faces, one window, motivated light, a decision instead of a creature. This is precisely the register Papamichael has built a career defending: <i>embracing the limitations of the location.</i> Genre on the label, humanism in the execution.",
    risk:"Performance-dependent and dialogue-heavy. Lipsync has to be clean or the whole thing collapses. Needs the strongest script on the slate."},
 
-  {no:"03", jury:{ec:2,pp:3,pa:2}, key:"lastshift", title:"THE LAST SHIFT", fit:"Payne / Nebraska lane",
+  {no:"03", jury:{ec:2,pp:3,pa:2,ap:2}, key:"lastshift", title:"THE LAST SHIFT", fit:"Payne / Nebraska lane",
    art:"art/lastshift.jpg",
    log:"The night the interstate is decommissioned, a toll booth operator works her final eight hours. At 3 a.m. a car pulls up that shouldn't exist.",
    meta:["Sparse dialogue","2 locations","2 characters","~40 shots","Photoreal"],
    why:"An ordinary job on an extraordinary night — Nebraska-scale humanism with exactly one genre turn, held until the two-minute mark. Both judges reward a small life with something enormous underneath it.",
    risk:"Exterior night plus a vehicle is the highest drift surface here. Budget extra generations for the car."},
 
-  {no:"04", jury:{ec:2,pp:2,pa:1}, key:"rerun", title:"RERUN", fit:"Medium lever",
+  {no:"04", jury:{ec:2,pp:2,pa:1,ap:3}, key:"rerun", title:"RERUN", fit:"Proyas lane (was: medium lever)",
    art:"art/rerun.jpg",
    log:"A man replays the last conversation he had with his brother. Each time he runs it, the room remembers a little less — until only the sentence he can't forgive is still in focus.",
    meta:["Voice-over","1 location","2 characters","~34 shots","Degrading by design"],
-   why:"Criterion 4 is <b>\"effective use of the medium\"</b> and almost nobody will pull this lever. Generation drift stops being a defect and becomes the story — a camera cannot shoot a memory decaying, and animation wouldn't bother. Repetition also buys you consistency for free.",
+   why:"Criterion 4 is <b>\"effective use of the medium\"</b> and almost nobody will pull this lever. Generation drift stops being a defect and becomes the story — a camera cannot shoot a memory decaying, and animation wouldn't bother. Repetition also buys you consistency for free. <b>Re-rated 2026-08-13:</b> a room that forgets itself between passes is <i>Dark City</i>'s premise. Proyas has spent his career on unstable memory and stolen identity — this went from the slate's least-claimed concept to the one with the loudest advocate in the room.",
    risk:"Conceptual films die when they impress but don't move. It has to land emotionally by minute two, or it's a tech demo with a sad voice-over."},
 
-  {no:"05", jury:{ec:3,pp:1,pa:2}, key:"paper", title:"PAPER CITIES", fit:"Animation lane",
+  {no:"05", jury:{ec:3,pp:1,pa:2,ap:3}, key:"paper", title:"PAPER CITIES", fit:"Animation lane",
    art:"art/paper.jpg",
    log:"A seven-year-old's crayon map is the only record of a neighborhood being demolished. As the bulldozers arrive, the drawing starts defending itself.",
    meta:["Minimal dialogue","Stylized 2D","2 characters","~44 shots","Full animation"],
    why:"Catmull's native language. Full stylization sidesteps the uncanny valley that will sink half the field, and child's-eye emotional logic is the exact grammar he spent thirty years refining. Also the most visually distinctive thing you could put in front of a jury watching photoreal entry after photoreal entry.",
    risk:"Style consistency across 44 shots is the entire game. Lock the look with a style sheet before a single shot is generated."},
 
-  {no:"06", jury:{ec:2,pp:3,pa:2}, key:"handoff", title:"THE HANDOFF", fit:"Lowest risk",
+  {no:"06", jury:{ec:2,pp:3,pa:2,ap:1}, key:"handoff", title:"THE HANDOFF", fit:"Lowest risk",
    art:"art/handoff.jpg",
    log:"A rideshare driver picks up a passenger who knows her name, her route, and what she did in 2019. Neither of them gets out of the car.",
    meta:["Dialogue-driven","1 interior","2 characters","~36 shots","Photoreal"],
    why:"<i>\"Have your camera in the right place at the right time and let the actors do the work.\"</i> One interior, two faces, night exteriors passing outside the glass. The smallest drift surface in the slate and the cleanest fit for a cinematographer who shoots people, not places.",
    risk:"Nowhere to hide. The script has to be genuinely good — this is the concept most exposed by a weak second act."},
-  {no:"07", key:"breach", jury:{ec:3,pp:3,pa:3}, title:"BREACH", fit:"Built for all three",
+  {no:"07", key:"breach", jury:{ec:3,pp:3,pa:3,ap:2}, title:"BREACH", fit:"Broadest fit",
    art:"art/breach.jpg",
    log:"A mother and her daughter are barricaded four floors below the roof. Between them and the sky is a stairwell, and something in it that hunts by sound. To get the girl up, the mother has to be the noise.",
    meta:["Minimal dialogue","1 stairwell","2 characters","~40 shots","Photoreal"],
-   why:"Written after Anderson was named, because nothing else on the slate was built for him. He gets a vertical corridor with a threat and a rule the audience can learn — his native grammar, landing by landing, doorway by doorway. Papamichael gets emergency lighting, one torch and two faces, practical sources only. Catmull gets a parent trading herself for a child, which is the oldest turn there is and still works. The geography comes free: a stairwell is the most readable space in cinema — up is safety, down is death, and nobody has to be told.",
+   why:"<b>Re-rated 2026-08-13:</b> no longer \"built for all three\" — it is the broadest fit on the slate, not a clean sweep. A concrete stairwell is deliberately anonymous, which is exactly the decision Proyas would say you avoided making; give the building a point of view and he comes along. Written after Anderson was named, because nothing else on the slate was built for him. He gets a vertical corridor with a threat and a rule the audience can learn — his native grammar, landing by landing, doorway by doorway. Papamichael gets emergency lighting, one torch and two faces, practical sources only. Catmull gets a parent trading herself for a child, which is the oldest turn there is and still works. The geography comes free: a stairwell is the most readable space in cinema — up is safety, down is death, and nobody has to be told.",
    risk:"Two, and the second one is measured. A creature is the most expensive thing on earth to keep consistent — design it so you barely see it; sound and reaction carry the scene, which is also what makes it frightening. And the first attempt at this key art was refused by the safety filter for putting a child in visible danger. That will happen again, mid-production, on a clock. Keep the girl out of frame during every threat beat: shoot her reaction, the mother's back, a hand, a shadow. It is the cheaper film and the better one."}
 ];
 
@@ -2311,17 +2325,19 @@ function warJudges(){
     '<p class="lede">All three are named. Two of them spent their careers arguing for restraint; the third spent his making things move. That split is the single most important fact about this competition, and it is not the jury we were planning for a week ago.</p>'+
     cards+
     '<hr class="war-rule">'+
-    '<h3>The one thing all three demand</h3>'+
+    '<h3>The one thing all four demand</h3>'+
     '<p>Their tastes barely overlap. Their <em>craft floor</em> is identical, and it is narrower than it looks: <strong>the audience must always know where they are.</strong></p>'+
     '<div class="wgrid three">'+
       '<div class="wcard"><span class="tag">Catmull asks</span><h4>Could a child follow it?</h4><p>Emotional and spatial clarity are the same discipline to him. Confusion is a story failure.</p></div>'+
       '<div class="wcard"><span class="tag">Papamichael asks</span><h4>Do the eyelines cut?</h4><p>Screen direction, a motivated source, a master that establishes the room before you cut inside it.</p></div>'+
       '<div class="wcard"><span class="tag">Anderson asks</span><h4>Where is the threat?</h4><p>Thirty years of hunting something through a corridor. If the geography dissolves, the scene dies.</p></div>'+
+      '<div class="wcard"><span class="tag">Proyas asks</span><h4>Whose world is this?</h4><p>He built a city that rearranges itself while people sleep. A location that could be anywhere is a decision you failed to make.</p></div>'+
     '</div>'+
     '<p><strong>Legible space is the whole floor.</strong> It is also the single thing the default AI grammar cannot do — which is why most of the field fails it without noticing.</p>'+
 
     '<h3>Where they split, and what to do about it</h3>'+
-    '<p>Two of them reward restraint. One rewards momentum. A quiet two-hander in a kitchen now pleases <strong>one juror out of three</strong>; a chase with nobody in it pleases none. The target moved, and it moved toward <strong>genre with a heart and an eye</strong> — a real premise, a character worth losing, and craft that holds up when it moves.</p>'+
+    '<p>The panel is now <strong>three designers and one naturalist</strong>. Catmull, Anderson and Proyas all reward a world that was <em>decided</em>; only Papamichael rewards a world that was <em>observed</em>. A quiet two-hander in a kitchen now pleases <strong>one juror out of four</strong>; a chase with nobody in it pleases none. The target moved twice, and both times away from naturalism — toward <strong>genre with a heart, an eye, and a place</strong>.</p>'+
+    '<p class="rs-faint"><b>Read this the right way.</b> It is not an instruction to abandon the naturalist lane — Papamichael still votes, and a film that is superb at one thing beats a film that is even. It is a warning against the <em>middle</em>: a photoreal film with no design point of view now has three jurors with nothing to argue for.</p>'+
     '<div class="wl"><div class="wl-col"><h6>Now stronger than it was</h6><ul>'+
       '<li>Horror and sci-fi played <em>straight</em> — Anderson made <i>Event Horizon</i>, and Catmull will still ask what it is about</li>'+
       '<li>A physical threat with rules the audience can learn</li>'+
@@ -2336,9 +2352,9 @@ function warJudges(){
       '<li>Anything that reads as an exercise</li></ul></div></div>'+
 
     '<h3>The trap most of the field will still fall into</h3>'+
-    '<p>The <strong>AI cinematic trailer</strong>: forty disconnected five-second beauty shots, a whispered voice-over, ominous strings, endless slow push-ins, no scene, no coverage, no geography. Catmull has been immune since 1986. Papamichael rejected panning wide shots on <i>Ford v Ferrari</i> as the grammar of sports broadcasts. Anderson would ask where the threat is and get no answer. <strong>It is now the only thing all three would reject for the same reason.</strong></p>'+
-    '<h3>One more, and it matters more with three</h3>'+
-    '<p>A third juror is a third way to be <em>forgiven</em>, not a third bar to clear. Jurors argue for what they love. A film that is <strong>excellent at one thing</strong> and competent elsewhere beats a film that is uniformly good — because it gives one person in that room something to fight for.</p>'+
+    '<p>The <strong>AI cinematic trailer</strong>: forty disconnected five-second beauty shots, a whispered voice-over, ominous strings, endless slow push-ins, no scene, no coverage, no geography. Catmull has been immune since 1986. Papamichael rejected panning wide shots on <i>Ford v Ferrari</i> as the grammar of sports broadcasts. Anderson would ask where the threat is and get no answer. Proyas — who signed an open letter against exactly this — would see the tool and not the film. <strong>It is now the only thing all four would reject for the same reason.</strong></p>'+
+    '<h3>One more, and it matters more with four</h3>'+
+    '<p>A fourth juror is a fourth way to be <em>forgiven</em>, not a fourth bar to clear. Jurors argue for what they love. A film that is <strong>excellent at one thing</strong> and competent elsewhere beats a film that is uniformly good — because it gives one person in that room something to fight for. With four in the room, the uniformly-good film is now the <em>most</em> dangerous thing to make.</p>'+
     '</div>';
 }
 
@@ -2367,7 +2383,7 @@ function warRules(){
 
 /* How hard each juror would fight for a concept, 1–3. Our read, not theirs —
    the point is to see at a glance where the slate is thin. */
-const JURORS=[["ec","Catmull"],["pp","Papamichael"],["pa","Anderson"]];
+const JURORS=[["ec","Catmull"],["pp","Papamichael"],["pa","Anderson"],["ap","Proyas"]];
 function juryBar(j){
   if(!j) return "";
   return '<div class="jurybar">'+JURORS.map(function(x){
@@ -2395,7 +2411,7 @@ function warSlate(){
     '</article>').join("");
 
   return '<div class="war"><p class="war-kicker">Our concepts</p><h2>Seven shapes, scored against the real jury</h2>'+
-    '<p class="lede">Six of these were written for a two-man jury that wanted restraint. Anderson changed that, so every card now carries our read of how hard each juror would fight for it — and 07 exists because none of the other six were built for him. All still deliberately small: drift is the enemy. One lane per team, no two the same.</p>'+
+    '<p class="lede">Six of these were written for a two-man jury that wanted restraint. Anderson changed that, and 07 exists because none of the other six were built for him. <b>Proyas has now changed it again</b> — every card carries a fourth bar, and the slate did not move the way you would expect: the two concepts that gained most (<b>04 RERUN</b> and <b>05 PAPER CITIES</b>) are the two nobody had claimed. Ratings are our read, not theirs. All still deliberately small: drift is the enemy. One lane per team, no two the same.</p>'+
     cards+
     '<hr class="war-rule">'+
     '<h3>How to run the teams</h3>'+
@@ -2541,7 +2557,7 @@ function warSide(mode){
     '<div class="sidefact"><b>First week of Oct</b><span>Fourteen winners.</span></div>'+
     '<h6>Note</h6><p class="rs-faint" style="font-size:11.5px;line-height:1.55">Dates can only be extended, never shortened.</p></div>';
 
-  if(mode==="judges") return '<div class="war-side"><h6>The panel — all three named</h6><ul class="toclist">'+
+  if(mode==="judges") return '<div class="war-side"><h6>The panel — all four named</h6><ul class="toclist">'+
     JUDGES.map(j=>'<li><a data-jump="#j-'+j.key+'">'+esc(j.name)+'</a></li>').join("")+'</ul>'+
     '<h6>The four criteria</h6>'+
     '<div class="sidefact"><b>Directing &amp; Storytelling</b><span>Narrative clarity, emotional impact, point of view.</span></div>'+

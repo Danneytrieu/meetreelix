@@ -83,7 +83,7 @@ its neighbours.
 |---|---|
 | **Schedule** | the original availability grid, unchanged — its four panels moved into sub-tabs |
 | **The clock** | the festival timeline, computed live against the real dates. It advances on its own |
-| **The judges** | dossiers on Catmull and Papamichael: quotes, filmographies, what lands and what dies |
+| **The judges** | dossiers on all four — Catmull, Papamichael, Anderson, Proyas: quotes, filmographies, what lands and what dies |
 | **The rules** | the nine ways to be ruled non-eligible before a judge sees your film |
 | **The slate** | six concepts built for this specific jury, with key art |
 | **The room** | anonymous idea posting and voting |
